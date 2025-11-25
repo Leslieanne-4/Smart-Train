@@ -369,10 +369,17 @@
 
     <div id="tracking-screen" style="display: none !important;">
         <div id="top-bar">
-            <img src="assets/img/Dahomey_Discovery_Logo.jpg" alt="Logo Small" id="top-logo">
-            <div id="circuit-info" style="font-weight:bold; color:#993300;">MODE: <span id="circuit-mode">---</span></div>
-            <div id="gps-status" class="status-badge">🔴 GPS OFF</div>
-        </div>
+    <button id="btn-back-home" style="
+        background: none;
+        border: none;
+        font-size: 1.8em;
+        color: #993300;
+        cursor: pointer;
+        padding: 0 10px;
+    ">⬅️</button> <img src="assets/img/Dahomey_Discovery_Logo.jpg" alt="Logo Small" id="top-logo">
+    <div id="circuit-info" style="font-weight:bold; color:#993300;">MODE: <span id="circuit-mode">---</span></div>
+    <div id="gps-status" class="status-badge">🔴 GPS OFF</div>
+</div>
 
         <div id="main-layout">
             <div id="map"></div>
@@ -876,9 +883,91 @@ infoPanel.addEventListener('touchend', () => {
         infoPanel.classList.add('expanded');
     }
 });
+
+ 
+   // --- NOUVELLES FONCTIONS POUR LA NAVIGATION ---
+
+function showHomeScreen() {
+    trackingScreen.style.display = 'none';
+    homeScreen.style.display = 'flex';
+    // Assurez-vous d'arrêter tout suivi/simulation si on revient à l'accueil
+    if (watchID) navigator.geolocation.clearWatch(watchID);
+    if (simulationInterval) clearInterval(simulationInterval);
+    releaseWakeLock(); // Libère le wakelock
+    stopProgressTracking(); // Arrête la barre de progression
+    audioPlayer.pause(); // Met en pause l'audio
+    isAudioPlaying = false;
+    isAudioPaused = false;
+    btnActivateAudio.style.display = 'none'; // Cacher le bouton d'activation
+}
+
+function showTrackingScreen() {
+    homeScreen.style.display = 'none';
+    trackingScreen.style.display = 'flex';
+}
+
+// Gérer le clic sur le nouveau bouton Retour
+document.getElementById('btn-back-home').addEventListener('click', () => {
+    // Utiliser history.back() pour un retour propre dans l'historique géré
+    history.back();
+});
+
+
+// --- MODIFICATION DES FONCTIONS EXISTANTES ---
+
+// Modifie startCircuit
+function startCircuit(mode) {
+    requestWakeLock();
+    isSimulationMode = false;
+    initCircuit(mode);
+    showTrackingScreen(); // Affiche l'écran de suivi
+    // Pousser un état dans l'historique quand on va à l'écran de suivi
+    history.pushState({ screen: 'tracking' }, '', '#tracking');
+    setTimeout(() => { startTracking(); }, 100);
+}
+
+// Modifie startSimulation
+function startSimulation() {
+    requestWakeLock();
+    isSimulationMode = true;
+    initCircuit('jour');
+    showTrackingScreen(); // Affiche l'écran de suivi
+    // Pousser un état dans l'historique quand on va à l'écran de suivi
+    history.pushState({ screen: 'tracking' }, '', '#tracking');
+    document.getElementById('circuit-mode').textContent = "SIMULATION";
+    gpsStatus.textContent = "🎮 SIMULATION";
+    gpsStatus.classList.add('simu');
+    gpsStatus.classList.remove('offline');
+    setTimeout(() => { runSimulationLoop(); }, 1000);
+}
+
+
+// --- GESTION DE L'ÉVÉNEMENT POPSTATE (bouton retour du navigateur) ---
+window.addEventListener('popstate', (event) => {
+    // Si l'état actuel est l'écran d'accueil (ou l'état initial),
+    // ou si l'événement popstate revient à l'URL sans #tracking
+    if (event.state === null || event.state.screen !== 'tracking') {
+        showHomeScreen();
+    } else {
+        // Cela devrait techniquement ne pas arriver si on utilise bien pushState
+        // mais c'est une sécurité.
+        showTrackingScreen();
+    }
+});
+
+// Gérer le cas où l'utilisateur arrive directement sur l'URL #tracking (pourrait être utile)
+// if (window.location.hash === '#tracking') {
+//     showTrackingScreen();
+//     // Potentiellement recharger le circuit en fonction de l'état (plus complexe)
+// } else {
+//     showHomeScreen(); // Assure que l'accueil est affiché par défaut
+// }
+
    </script>
 
-    <script>
+
+
+   <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('sw.js')
