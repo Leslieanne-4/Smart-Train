@@ -69,7 +69,13 @@
             padding: 20px;
             z-index: 100;
         }
-
+        
+        @media (max-width: 768px) { /* Pour les écrans de largeur inférieure ou égale à 768px */
+    #home-screen {
+        background-image: url('assets/img/Petit_train_mobile.jpg'); /* Version optimisée pour mobile */
+        background-position: center bottom; /* Ou une autre position si l'image mobile est différente */
+     }
+    }
         #home-overlay {
             position: absolute;
             top: 0;
@@ -206,6 +212,10 @@
             bottom: 0; /* Positionner au bas complet de l'écran sur mobile */
             left: 0;
             width: 100%;
+            height: 35%; /* Hauteur initiale réduite à 35% de l'écran sur mobile */
+            min-height: 150px; /* Une hauteur minimale pour toujours voir les infos clés */
+            transition: height 0.3s ease-out; /* Ajoute une transition pour une animation fluide */
+            cursor: grab; /* Indique qu'il peut être glissé */
             transform: none; /* Annuler le translateX */
             max-width: none; /* Annuler le max-width sur mobile */
             max-height: 80%; /* Limiter la hauteur à 80% de l'écran sur mobile */
@@ -222,6 +232,13 @@
             z-index: 999;
             border-top: 4px solid #993300;
         }
+        #info-panel.expanded {
+        height: 80%; /* Hauteur quand le panneau est déplié */
+        cursor: grabbing;
+        }
+        #info-panel.collapsed {
+        height: 35%; /* Hauteur quand le panneau est replié (même que la hauteur initiale) */
+}
 
         .info-row {
             display: flex;
@@ -244,6 +261,8 @@
             border-radius: 8px;
             padding: 10px;
             margin-top: 10px;
+            max-height: calc(100% - 100px); /* Laisse de la place pour le titre et les infos */
+            overflow-y: auto; /* Important pour le défilement interne */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -808,6 +827,55 @@
             btnPlayPause.disabled = false;
         }
    
+        // --- GESTION DU PANNEAU GLISSANT (Info Panel) ---
+        const infoPanel = document.getElementById('info-panel');
+        let startY;
+        let startHeight;
+        let isDragging = false;
+        
+        // Initialiser le panneau en mode "replié"
+        if (window.innerWidth < 900) { // S'applique uniquement sur mobile
+        infoPanel.classList.add('collapsed');
+    }
+
+infoPanel.addEventListener('touchstart', (e) => {
+    if (window.innerWidth >= 900) return; // Ne pas activer sur PC
+
+    isDragging = true;
+    startY = e.touches[0].clientY;
+    startHeight = infoPanel.offsetHeight;
+    infoPanel.style.transition = 'none'; // Désactiver la transition pendant le glissement
+    infoPanel.classList.remove('collapsed', 'expanded'); // Supprimer les classes pour laisser JS gérer la hauteur
+    infoPanel.style.cursor = 'grabbing';
+});
+
+infoPanel.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+
+    const deltaY = e.touches[0].clientY - startY;
+    let newHeight = startHeight - deltaY;
+
+    // Limiter la hauteur entre 150px et 80% de la fenêtre
+    newHeight = Math.max(150, Math.min(window.innerHeight * 0.8, newHeight));
+
+    infoPanel.style.height = `${newHeight}px`;
+});
+
+infoPanel.addEventListener('touchend', () => {
+    if (!isDragging) return;
+
+    isDragging = false;
+    infoPanel.style.transition = 'height 0.3s ease-out'; // Réactiver la transition
+    infoPanel.style.cursor = 'grab';
+
+    // Décider si le panneau doit être replié ou déplié en fonction de sa hauteur finale
+    const currentHeight = infoPanel.offsetHeight;
+    if (currentHeight < window.innerHeight * 0.5) { // Si moins de 50%, replier
+        infoPanel.classList.add('collapsed');
+    } else { // Sinon, déplier
+        infoPanel.classList.add('expanded');
+    }
+});
    </script>
 
     <script>
