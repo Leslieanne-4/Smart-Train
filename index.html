@@ -12,950 +12,416 @@
 
     <link rel="manifest" href="manifest.json">
 
-
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' data: blob:;
+        script-src 'self' 'unsafe-inline' https://unpkg.com;
+        style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: blob: https://*.tile.openstreetmap.org;
+        media-src 'self' assets/audio/;
+        connect-src 'self' https://nominatim.openstreetmap.org;
+    ">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 
 
-
     <style>
-
+    
         /* ========================================================= */
-
+    
         /* CONFIGURATION GÉNÉRALE */
-
+    
         /* ========================================================= */
-
+    
         * { box-sizing: border-box; }
-
-
 
         body {
 
             font-family: 'Poppins', sans-serif;
-
             margin: 0;
-
             padding: 0;
-
             height: 100vh;
-
             overflow: hidden;
-
             background-color: #f0f0f0;
-
         }
 
-
-
         /* ========================================================= */
-
         /* 1. ÉCRAN D'ACCUEIL */
-
         /* ========================================================= */
-
         #home-screen {
-
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             background-image: url('assets/img/Petit_train.jpg');
-
             background-size: cover;
-
             background-position: center;
-
             background-repeat: no-repeat;
-
             display: flex;
-
             flex-direction: column;
-
             justify-content: center;
-
             align-items: center;
-
             padding: 20px;
-
             z-index: 100;
-
         }
-
-
 
         #home-overlay {
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             background: rgba(0, 0, 0, 0.6);
-
             z-index: 1;
-
         }
-
-
 
         #home-content {
-
             position: relative;
-
             z-index: 2;
-
             width: 100%;
-
             max-width: 500px;
-
             text-align: center;
-
         }
-
-
 
         #dahomey-logo-home {
-
             max-width: 180px;
-
             margin-bottom: 20px;
-
             border-radius: 10px;
-
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-
             background: white;
-
             padding: 10px;
-
         }
-
-
 
         .home-title {
-
             color: white;
-
             font-size: 2em;
-
             margin-bottom: 30px;
-
-
-
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-
-
-
         }
-
-
 
         .circuit-card {
-
             background: white;
-
             border-radius: 12px;
-
             padding: 20px;
-
             margin-bottom: 15px;
-
             cursor: pointer;
-
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
             transition: transform 0.2s, box-shadow 0.2s;
-
-
-
             border-left: 8px solid transparent;
-
-
-
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-
-
-
             text-align: left;
-
-
-
             width: 100%;
-
-
-
         }
-
-
-
-
-
-
 
         .circuit-card:hover {
-
             transform: translateX(5px);
-
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-
         }
-
-
 
         .circuit-card h3 { margin: 0; font-size: 1.2em; color: #333; }
-
         .circuit-card span { font-size: 0.9em; color: #666; }
-
         .chevron-icon { font-size: 1.5em; font-weight: bold; }
 
-
-
         #btn-start-day { border-left-color: #CC0000; }
-
         #btn-start-day .chevron-icon { color: #CC0000; }
 
-
-
         #btn-start-night { border-left-color: #DAA520; }
-
         #btn-start-night .chevron-icon { color: #DAA520; }
 
-
-
         /* Bouton Simulation */
-
         #btn-simulation {
-
             background-color: #2196F3; /* Bleu */
-
             color: white;
-
             border: none;
-
             padding: 15px;
-
             width: 100%;
-
-
-
             border-radius: 12px;
-
-
-
             font-weight: bold;
-
-
-
             cursor: pointer;
-
-
-
             margin-top: 20px;
-
-
-
             box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
-
-
-
         }
-
-
 
         #btn-simulation:hover { background-color: #1976D2; }
 
-
-
-
-
-
-
-
-
-
-
         /* ========================================================= */
-
         /* 2. ÉCRAN DE SUIVI (STYLE DASHBOARD MAP) */
-
         /* ========================================================= */
-
-
 
         #tracking-screen {
-
-
-
             display: none;
-
-
-
             height: 100vh;
-
-
-
             width: 100%;
-
-
-
             display: flex;
-
-
-
             flex-direction: column;
-
-
-
         }
-
-
-
-
-
-
 
         #top-bar {
-
-
-
             height: 80px;
-
-
-
             background: white;
-
-
-
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-
-
-
             display: flex;
-
-
-
             align-items: center;
-
-
-
             justify-content: space-between;
-
-
-
             padding: 0 20px;
-
-
-
             z-index: 10;
-
-
-
             flex-shrink: 0;
-
-
-
         }
-
-
-
-
-
-
 
         #top-logo { height: 50px; }
 
-
-
-
-
-
-
         .status-badge {
-
-
-
             background: #4CAF50;
-
             color: white;
-
             padding: 5px 15px;
-
             border-radius: 20px;
-
             font-weight: bold;
-
             font-size: 0.85em;
-
             display: flex;
-
             align-items: center;
-
             gap: 5px;
-
         }
-
-
 
         .status-badge.offline { background: #F44336; }
-
         .status-badge.simu { background: #2196F3; }
-
         .status-badge.wake-lock-on { background: #8BC34A; }
 
-
-
         #main-layout {
-
             flex-grow: 1;
-
             position: relative;
-
             display: flex;
-
         }
-
-
 
         #map { width: 100%; height: 100%; z-index: 1; }
 
-
-
-
-
-
-
-       #info-panel {
-
-        position: absolute;
-
-        bottom: 0; /* Positionner au bas complet de l'écran sur mobile */
-
-        left: 0;
-
-        width: 100%;
-
-        transform: none; /* Annuler le translateX */
-
-        max-width: none; /* Annuler le max-width sur mobile */
-
-        max-height: 80%; /* Limiter la hauteur à 80% de l'écran sur mobile */
-
-        overflow-y: auto; /* Permettre le défilement si le contenu dépasse */
-
-        background: rgba(255, 255, 255, 0.95);
-
-        -webkit-backdrop-filter: blur(10px); /* Ajout pour Safari */
-
-        backdrop-filter: blur(10px);
-
-        padding: 25px;
-
-        border-top-left-radius: 15px; /* Arrondir juste les coins supérieurs */
-
-        border-top-right-radius: 15px;
-
-        border-bottom-left-radius: 0; /* Supprimer l'arrondi en bas */
-
-        border-bottom-right-radius: 0;
-
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.2); /* Ombre vers le haut */
-
-        z-index: 999;
-
-        border-top: 4px solid #993300;
-
-    }
-
-
+        #info-panel {
+            position: absolute;
+            bottom: 0; /* Positionner au bas complet de l'écran sur mobile */
+            left: 0;
+            width: 100%;
+            transform: none; /* Annuler le translateX */
+            max-width: none; /* Annuler le max-width sur mobile */
+            max-height: 80%; /* Limiter la hauteur à 80% de l'écran sur mobile */
+            overflow-y: auto; /* Permettre le défilement si le contenu dépasse */
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(10px); /* Ajout pour Safari */
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-top-left-radius: 15px; /* Arrondir juste les coins supérieurs */
+            border-top-right-radius: 15px;
+            border-bottom-left-radius: 0; /* Supprimer l'arrondi en bas */
+            border-bottom-right-radius: 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.2); /* Ombre vers le haut */
+            z-index: 999;
+            border-top: 4px solid #993300;
+        }
 
         .info-row {
-
-
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             margin-bottom: 15px;
-
             border-bottom: 1px dashed #ddd;
-
             padding-bottom: 10px;
-
         }
-
         .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-
-
         #current-stop-label { font-size: 0.8em; color: #777; text-transform: uppercase; letter-spacing: 1px; }
-
         #current-stop-name { font-size: 1.8em; font-weight: 800; color: #CC0000; line-height: 1.1; }
 
-
-
         .secondary-info { font-size: 0.95em; color: #555; }
-
         .highlight-info { color: #DAA520; font-weight: bold; font-size: 1.1em; }
 
-
-
         #audio-status-bar {
-
             background: #f0f0f0;
-
             border-radius: 8px;
-
             padding: 10px;
-
             margin-top: 10px;
-
             display: flex;
-
-
-
             flex-direction: column;
-
-
-
             align-items: center;
-
-
-
         }
-
-
 
         #audio-feedback { margin: 0 0 10px 0; font-size: 0.9em; font-weight: 600; }
 
-
-
-       
-
-
-
         /* --- BARRE DE PROGRESSION --- */
-
-
-
         #progress-container {
-
-
-
             width: 100%;
-
-
-
             height: 8px;
-
-
-
             background: #ccc;
-
-
-
             border-radius: 4px;
-
-
-
             margin-bottom: 10px;
-
-
-
             overflow: hidden;
-
-
-
         }
-
-
-
-
-
-
 
         #progress-bar {
-
-
-
             height: 100%;
-
-
-
             width: 0%;
-
             background: #CC0000;
-
             transition: width 0.1s linear;
-
-
-
         }
-
-
 
         #manual-controls { display: flex; gap: 10px; width: 100%; }
-
         #manual-controls button {
-
             flex: 1;
-
             padding: 10px;
-
-
             border: none;
-
-
             border-radius: 5px;
-
-
             font-weight: bold;
-
-
             cursor: pointer;
-
-
             color: white;
-
-
             transition: opacity 0.2s;
-
-
         }
-
-#btn-replay { background-color: #DAA520; color: #333; }
+        /* Correction de la couleur du bouton replay pour qu'elle soit blanche */
+        #btn-replay { background-color: #DAA520; color: white; }
         #btn-play-pause { background-color: #4CAF50; /* Vert pour Play */ }
-        #btn-play-pause.paused { background-color: #FF9800; /* Orange pour Pause */ } /* Nouveau style */
+        #btn-play-pause.paused { background-color: #FF9800; /* Orange pour Pause */ }
         #btn-stop { background-color: #CC0000; }
         #manual-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-
-    /* --- RESPONSIVE PC --- */
-
-     @media (min-width: 900px) {
-
-            #info-panel {
-
-                bottom: auto; /* Annule le bottom: 0; du mode mobile */
-
-                top: 20px; /* Positionne en haut */
-
-                left: 20px; /* Positionne à gauche */
-
-                transform: none; /* Annule tout transform (pas que le translateX) */
-
-                width: 350px; /* Largeur fixe pour PC */
-
-                max-width: 600px; /* Réintroduire le max-width pour PC */
-
-                max-height: calc(100% - 40px); /* Hauteur pour PC */
-
-                overflow-y: auto;
-
-                border-radius: 15px; /* Réintroduire l'arrondi complet des coins pour PC */
-
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Réinitialiser l'ombre vers le bas pour PC */
-
-            }
-
+        /* Nouveau style pour le bouton d'activation audio */
+        #btn-activate-audio {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            display: none; /* Caché par défaut */
         }
 
-
-
+        /* --- RESPONSIVE PC --- */
+        @media (min-width: 900px) {
+            #info-panel {
+                bottom: auto; /* Annule le bottom: 0; du mode mobile */
+                top: 20px; /* Positionne en haut */
+                left: 20px; /* Positionne à gauche */
+                transform: none; /* Annule tout transform (pas que le translateX) */
+                width: 350px; /* Largeur fixe pour PC */
+                max-width: 600px; /* Réintroduire le max-width pour PC */
+                max-height: calc(100% - 40px); /* Hauteur pour PC */
+                overflow-y: auto;
+                border-radius: 15px; /* Réintroduire l'arrondi complet des coins pour PC */
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Réinitialiser l'ombre vers le bas pour PC */
+            }
+        }
     </style>
-
-
-
-
-
-
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-
-
 </head>
-
-
-
 <body>
 
-
-
-
-
-
-
     <div id="home-screen">
-
-
-
         <div id="home-overlay"></div>
-
-
-
-       
-
-
-
         <div id="home-content">
-
-
-
             <img src="assets/img/Dahomey_Discovery_Logo.jpg" alt="Logo Dahomey" id="dahomey-logo-home">
-
-
-
-           
-
-
-
             <h1 class="home-title">Bienvenue, Opérateur</h1>
 
-
-
-
-
-
-
             <div id="btn-start-day" class="circuit-card" onclick="startCircuit('jour')">
-
-
-
                 <div>
-
-
-
                     <h3>CIRCUIT JOUR ☀️</h3>
-
-
-
                     <span>Découverte historique & culturelle</span>
-
-
-
                 </div>
-
-
-
                 <div class="chevron-icon">➤</div>
-
-
-
             </div>
-
-
-
-
-
-
 
             <div id="btn-start-night" class="circuit-card" onclick="startCircuit('nuit')">
-
-
-
                 <div>
-
-
-
                     <h3>CIRCUIT NUIT 🌙</h3>
-
-
-
                     <span>Ambiance nocturne & lumières</span>
-
-
-
                 </div>
-
-
-
                 <div class="chevron-icon">➤</div>
-
-
-
             </div>
-
-
-
-
-
-
 
             <button id="btn-simulation" onclick="startSimulation()">🎮 TESTER EN SIMULATION (SANS GPS)</button>
-
         </div>
-
     </div>
-
-
-
-
 
     <div id="tracking-screen" style="display: none !important;">
-
-
-
-       
-
-
-
         <div id="top-bar">
-
             <img src="assets/img/Dahomey_Discovery_Logo.jpg" alt="Logo Small" id="top-logo">
-
             <div id="circuit-info" style="font-weight:bold; color:#993300;">MODE: <span id="circuit-mode">---</span></div>
-
             <div id="gps-status" class="status-badge">🔴 GPS OFF</div>
-
         </div>
-
-
-
-
-
-
 
         <div id="main-layout">
-
             <div id="map"></div>
-
-
-
         </div>
 
-
-
-              <div class="info-row" style="display:block;">
-
-                    <div id="current-stop-label">Arrêt Actuel</div>
-
-                    <div id="current-stop-name">DÉBUT DE PARCOURS</div>
-
-                </div>
-
-
-
-                <div class="info-row">
-
-                    <span class="secondary-info">Prochain :</span>
-
-                    <span id="next-stop-name" style="font-weight:600;">---</span>
-
-                </div>
-
-
-
-
-
-                <div class="info-row">
-
-                    <span class="secondary-info">Distance :</span>
-
-                    <span id="distance-display" class="highlight-info">---</span>
-
-                </div>
-
-
-
-                <div id="audio-status-bar">
-
-
-
-                    <div id="audio-feedback">Prêt pour le départ.</div>
-
-
-
-                   
-
-
-
-                    <div id="progress-container">
-
-                        <div id="progress-bar"></div>
-
-                    </div>
-
-
-                    <div id="manual-controls">
-                        <button id="btn-replay" disabled onclick="replayAudio()">🔁 Rejouer</button>$
-                        <button id="btn-play-pause" disabled onclick="togglePlayPause()">⏯️ Pause/Play </button> 
-                    </div>
-                    </div>
-                </div>
-
+        <div id="info-panel">
+            <div class="info-row" style="display:block;">
+                <div id="current-stop-label">Arrêt Actuel</div>
+                <div id="current-stop-name">DÉBUT DE PARCOURS</div>
             </div>
 
-        </div>
+            <div class="info-row">
+                <span class="secondary-info">Prochain :</span>
+                <span id="next-stop-name" style="font-weight:600;">---</span>
+            </div>
 
+            <div class="info-row">
+                <span class="secondary-info">Distance :</span>
+                <span id="distance-display" class="highlight-info">---</span>
+            </div>
+
+            <div id="audio-status-bar">
+                <div id="audio-feedback">Prêt pour le départ.</div>
+                
+                <div id="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+
+                <div id="manual-controls">
+                    <button id="btn-replay" disabled onclick="replayAudio()">🔁 Rejouer</button>
+                    <button id="btn-play-pause" disabled onclick="togglePlayPause()">⏯️ Pause/Play </button> 
+                </div>
+                <button id="btn-activate-audio">🔊 Activer le Son</button>
+            </div>
+        </div>
     </div>
 
-
-
-
-
-
-
-   <script>
-
+    <script>
         // =========================================================
-
         // DONNÉES DU CIRCUIT JOUR (SANS PHOTOS)
-
         // =========================================================
-
         const CIRCUIT_JOUR_STOPS = [
-
             { id: 1, name: "Départ", file: "depart_2.mp3", latitude: 6.352701574373512, longitude: 2.407548102091667, triggerRadius: 100, audioDuration: 31 },
-
             { id: 2, name: "Mur du Patrimoine", file: "mur_patrimoine_2.mp3", latitude: 6.350008082284632, longitude: 2.415699296052794, triggerRadius: 500, audioDuration: 31 },
-
             { id: 3, name: "Avenue Jean Paul II", file: "avenue_jean_paul_2.mp3", latitude: 6.352762241666526, longitude: 2.4201564243656684, triggerRadius: 500, audioDuration: 31 },
-
             { id: 4, name: "Place du Souvenir", file: "place_souvenir_2.mp3", latitude: 6.353965166963285, longitude: 2.404862680183919, triggerRadius: 400, audioDuration: 31 },
-
             { id: 5, name: "Place Bio Guéra", file: "bio_guerra_2.mp3", latitude: 6.350322364770094, longitude: 2.3875428397110525, triggerRadius: 400, audioDuration: 31 },
-
             { id: 6, name: "Hôtel Sofitel", file: "sofitel_2.mp3", latitude: 6.349740427997271, longitude: 2.3936832955293195, triggerRadius: 400, audioDuration: 53 },
-
             { id: 7, name: "Fin du Trajet", file: "fin_trajet_2.mp3", latitude: 6.352701574373512, longitude: 2.407548102091667, triggerRadius: 300, audioDuration: 41 }
-
-
-
         ];
 
-        let CIRCUIT_NUIT_STOPS = [];
+        // Rempli avec les mêmes données que le jour pour éviter l'erreur "Circuit vide"
+        // Tu peux modifier ces données plus tard pour le circuit de nuit.
+        let CIRCUIT_NUIT_STOPS = [
+            { id: 1, name: "Départ Nocturne", file: "depart_2.mp3", latitude: 6.352701574373512, longitude: 2.407548102091667, triggerRadius: 100, audioDuration: 31 },
+            { id: 2, name: "Mur du Patrimoine (Nuit)", file: "mur_patrimoine_2.mp3", latitude: 6.350008082284632, longitude: 2.415699296052794, triggerRadius: 500, audioDuration: 31 },
+            { id: 3, name: "Avenue Jean Paul II (Nuit)", file: "avenue_jean_paul_2.mp3", latitude: 6.352762241666526, longitude: 2.4201564243656684, triggerRadius: 500, audioDuration: 31 },
+            { id: 4, name: "Place du Souvenir (Nuit)", file: "place_souvenir_2.mp3", latitude: 6.353965166963285, longitude: 2.404862680183919, triggerRadius: 400, audioDuration: 31 },
+            { id: 5, name: "Place Bio Guéra (Nuit)", file: "bio_guerra_2.mp3", latitude: 6.350322364770094, longitude: 2.3875428397110525, triggerRadius: 400, audioDuration: 31 },
+            { id: 6, name: "Hôtel Sofitel (Nuit)", file: "sofitel_2.mp3", latitude: 6.349740427997271, longitude: 2.3936832955293195, triggerRadius: 400, audioDuration: 53 },
+            { id: 7, name: "Fin du Trajet (Nuit)", file: "fin_trajet_2.mp3", latitude: 6.352701574373512, longitude: 2.407548102091667, triggerRadius: 300, audioDuration: 41 }
+        ];
 
         // --- VARIABLES D'ÉTAT ---
-
         let currentCircuitData = null;
         let currentStopIndex = 0;
         let isAudioPlaying = false;
-        let isAudioPaused = false; // Nouvelle variable pour l'état de pause
+        let isAudioPaused = false;
         let watchID = null;
         let simulationInterval = null;
         let isSimulationMode = false;
@@ -968,7 +434,6 @@
         let stopMarker = null;  
 
         // --- ÉLÉMENTS DOM ---
-
         const homeScreen = document.getElementById('home-screen');
         const trackingScreen = document.getElementById('tracking-screen');
         const gpsStatus = document.getElementById('gps-status');
@@ -977,871 +442,359 @@
         const audioFeedback = document.getElementById('audio-feedback');
         const distanceDisplay = document.getElementById('distance-display');
         const btnReplay = document.getElementById('btn-replay');
-        const btnPlayPause = document.getElementById('btn-play-pause'); // Nouveau bouton
+        const btnPlayPause = document.getElementById('btn-play-pause');
         const progressBar = document.getElementById('progress-bar');
-
-
-
-
-
-
+        const btnActivateAudio = document.getElementById('btn-activate-audio'); // Récupération du nouveau bouton
 
         // --- ICONES MAP ---
-
-
-
         const trainIcon = L.divIcon({
-
-
-
             className: 'custom-train-icon',
-
-
-
             html: '<div style="font-size:40px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🚂</div>',
-
-
-
             iconSize: [50, 50],
-
-
-
             iconAnchor: [25, 25]
-
-
-
         });
 
-
-
-
-
-
-
         // --- DÉBLOCAGE AUDIO & VERROUILLAGE ÉCRAN ---
-
-
-
-
-
-
-
-        function unlockAudio() {
-
-
-
-            audioPlayer.src = '';
-
-
-
-            audioPlayer.play().catch(() => {});
-
-
-
-            audioPlayer.pause();
-
-
-
-        }
-
-
-
-
-
-
+        // Cette fonction n'est plus nécessaire avec le nouveau bouton d'activation
+        // function unlockAudio() { } 
 
         async function requestWakeLock() {
-
-
-
             if ('wakeLock' in navigator) {
-
-
-
                 try {
-
-
-
                     wakeLock = await navigator.wakeLock.request('screen');
-
-
-
                     gpsStatus.classList.add('wake-lock-on');
-
-
-
                     console.log('Wake Lock activé');
-
-
-
                 } catch (err) {
-
-
-
                     console.error('Erreur Wake Lock:', err.name, err.message);
-
-
-
                 }
-
-
-
             }
-
-
-
         }
-
-
-
-
-
-
 
         function releaseWakeLock() {
-
-
-
             if (wakeLock) {
-
-
-
                 wakeLock.release().then(() => {
-
-
-
                     wakeLock = null;
-
-
-
                     gpsStatus.classList.remove('wake-lock-on');
-
-
-
+                    console.log('Wake Lock désactivé');
                 });
-
-
-
             }
-
-
-
         }
-
-
-
-
-
-
 
         // --- LOGIQUE GÉNÉRALE ---
-
-
-
-
-
-
-
         function startCircuit(mode) {
-
-
-
-            unlockAudio();
-
-
-
             requestWakeLock();
-
-
-
             isSimulationMode = false;
-
-
-
             initCircuit(mode);
-
-
-
+            // Assurez-vous que l'écran de suivi est visible avant de démarrer le tracking
+            trackingScreen.style.display = 'flex'; 
             setTimeout(() => { startTracking(); }, 100);
-
-
-
         }
-
-
-
-
-
-
 
         function startSimulation() {
-
-
-
-            unlockAudio();
-
-
-
             requestWakeLock();
-
-
-
             isSimulationMode = true;
-
-
-
-            initCircuit('jour');
-
-
-
+            initCircuit('jour'); // On commence toujours la simulation avec le circuit jour par défaut
            
-
-
-
             document.getElementById('circuit-mode').textContent = "SIMULATION";
-
-
-
             gpsStatus.textContent = "🎮 SIMULATION";
-
-
-
             gpsStatus.classList.add('simu');
-
-
-
             gpsStatus.classList.remove('offline');
 
-
-
-
-
-
-
+            // Assurez-vous que l'écran de suivi est visible avant de démarrer la simulation
+            trackingScreen.style.display = 'flex';
             setTimeout(() => { runSimulationLoop(); }, 1000);
-
-
-
         }
-
-
-
-
-
-
 
         function initCircuit(mode) {
-
-
-
             currentCircuitData = (mode === 'jour') ? CIRCUIT_JOUR_STOPS : CIRCUIT_NUIT_STOPS;
-
-
             if (currentCircuitData.length === 0) {
-
-
-
-                 alert("Erreur: Circuit vide."); return;
-
-
-
+                 alert("Erreur: Circuit vide. Veuillez configurer le circuit " + mode.toUpperCase() + ".");
+                 // Revenir à l'écran d'accueil si le circuit est vide
+                 homeScreen.style.display = 'flex';
+                 trackingScreen.style.display = 'none';
+                 return;
             }
-
-
             currentStopIndex = 0;
-
-
-
             homeScreen.style.display = 'none';
-
-
-
-            trackingScreen.style.display = 'flex';
-
+            trackingScreen.style.display = 'flex'; // Rendre l'écran de suivi visible
             document.getElementById('circuit-mode').textContent = mode.toUpperCase();
-
-
-
             currentStopName.textContent = "DÉBUT DE PARCOURS";
-
-
-
             nextStopName.textContent = currentCircuitData[currentStopIndex].name;
-
-
-
+            audioFeedback.textContent = "En attente du premier arrêt...";
+            btnActivateAudio.style.display = 'none'; // Cacher le bouton d'activation par défaut
         }
-
-
-
 
         function initMap(lat, lon) {
-
-
-
-            if (map !== null) map.remove();
-
-
-
+            if (map !== null) map.remove(); // Supprimer la carte existante si elle y est
             map = L.map('map').setView([lat, lon], 15);
-
-
-
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-
-
-
                 attribution: '&copy; OpenStreetMap'
-
-
-
             }).addTo(map);
-
-
-
             trainMarker = L.marker([lat, lon], { icon: trainIcon }).addTo(map);
-
-
-
             updateNextStopMarker();
-
-
-
         }
-
-
-
-
-
-
 
         function updateNextStopMarker() {
-
-
-
-            if (stopMarker) map.removeLayer(stopMarker);
-
-
-
-            const nextStop = currentCircuitData[currentStopIndex];
-
-
-
-            if (nextStop) {
-
-
-
-                 stopMarker = L.marker([nextStop.latitude, nextStop.longitude], {
-
-
-
-                    icon: L.divIcon({
-
-
-
-                        className: '',
-
-
-
-                        html: '<div style="background: #CC0000; width: 15px; height: 15px; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
-
-
-
-                        iconAnchor: [10, 10]
-
-
-
-                    })
-
-
-
-                 }).addTo(map);
-
-
-
+            if (stopMarker) {
+                map.removeLayer(stopMarker);
+                stopMarker = null; // Réinitialiser le marqueur après suppression
             }
-
-
-
+            const nextStop = currentCircuitData[currentStopIndex];
+            if (nextStop) {
+                 stopMarker = L.circleMarker([nextStop.latitude, nextStop.longitude], { // Utilisation de circleMarker pour plus de contrôle
+                    radius: 8,
+                    fillColor: "#CC0000",
+                    color: "white",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                 }).addTo(map);
+            }
         }
-
-
-
-
-
-
 
         function updateMap(lat, lon) {
-
-
-
             const newLatLng = new L.LatLng(lat, lon);
-
-
-
             if (trainMarker) trainMarker.setLatLng(newLatLng);
-
-
-
             if (map) map.setView(newLatLng, map.getZoom());
-
-
-
         }
-
-
-
-
-
-
 
         // --- BARRE DE PROGRESSION ---
-
-
-
         function startProgressTracking() {
-
-
-
+            if (progressInterval) clearInterval(progressInterval); // S'assurer qu'un seul intervalle est actif
             progressInterval = setInterval(() => {
-
-
-
                 const duration = audioPlayer.duration;
-
-
-
                 const currentTime = audioPlayer.currentTime;
-
-
-
                 if (duration > 0 && currentTime >= 0) {
-
-
-
                     const percentage = (currentTime / duration) * 100;
-
-
-
                     progressBar.style.width = percentage + '%';
-
-
-
                 }
-
-
-
             }, 100);
-
-
-
         }
-
-
-
-
-
-
 
         function stopProgressTracking() {
-
-
-
             clearInterval(progressInterval);
-
-
-
+            progressInterval = null; // Vider l'identifiant de l'intervalle
             progressBar.style.width = '0%';
-
-
-
         }
-
-
-
-
-
-
 
         // --- SUIVI GPS ---
-
-
-
         function startTracking() {
-
-
-
             if ('geolocation' in navigator) {
-
-
-
                 gpsStatus.textContent = "🟡 RECHERCHE...";
-
-
-
                 watchID = navigator.geolocation.watchPosition(
-
-
-
                     (position) => {
-
-
-
                         gpsStatus.textContent = "🟢 GPS ONLINE";
-
-
-
                         gpsStatus.classList.remove('offline');
-
-
-
                         if (map === null) initMap(position.coords.latitude, position.coords.longitude);
-
-
-
+                        else updateMap(position.coords.latitude, position.coords.longitude); // Mise à jour de la carte ici
                         checkStopTrigger(position.coords.latitude, position.coords.longitude);
-
-
-
                     },
-
-
-
                     (error) => {
-
-
-
                         gpsStatus.textContent = "🔴 GPS OFF";
-
-
-
                         gpsStatus.classList.add('offline');
-
-
-
-                        audioFeedback.textContent = "Erreur GPS : " + error.message;
-
-
-
-                        if (map === null) initMap(6.366, 2.448);
-
-
-
+                        audioFeedback.textContent = "Erreur GPS : " + error.message + ". Utilisation des coordonnées par défaut.";
+                        if (map === null) initMap(6.366, 2.448); // Coordonnées par défaut si initMap n'a jamais été appelé
+                        else updateMap(6.366, 2.448); // Si la carte existe, mettez à jour la position du train
+                        checkStopTrigger(6.366, 2.448); // Vérifier le déclenchement même avec des coordonnées par défaut
+                        console.error("Erreur de géolocalisation:", error);
                     },
-
-
-
                     { enableHighAccuracy: true, maximumAge: 2000 }
-
-
-
                 );
-
-
-
-            } else { alert("GPS non supporté."); }
-
-
-
+            } else {
+                alert("GPS non supporté par ce navigateur. Lancement en mode simulation.");
+                startSimulation(); // Fallback vers la simulation si le GPS n'est pas supporté
+            }
         }
-
-
-
-
-
-
 
         function runSimulationLoop() {
-
-
-
-            let simLat = 6.3535;
-
-
-
-            let simLon = 2.4070;
-
-
-
-            if (map === null) initMap(simLat, simLon);
-
-
-
-            const stepSize = 0.00005;
-
-
-
-
-
-
+            // Initialisation de la simulation plus proche du premier arrêt du CIRCUIT_JOUR_STOPS
+            let simLat = CIRCUIT_JOUR_STOPS[0].latitude + 0.001;
+            let simLon = CIRCUIT_JOUR_STOPS[0].longitude + 0.001;
+            
+            if (map === null) initMap(simLat, simLon); // Initialiser la carte si elle ne l'est pas
+            const stepSize = 0.00005; // Ajuste cette valeur pour changer la vitesse de la simulation
 
             simulationInterval = setInterval(() => {
-
-
-
-                if (!currentCircuitData[currentStopIndex]) {
-
-
-
+                if (!currentCircuitData || !currentCircuitData[currentStopIndex]) {
                     clearInterval(simulationInterval);
-
-
-
-                    releaseWakeLock();
-
-
-
+                    simulationInterval = null; // Vider l'identifiant de l'intervalle
+                    releaseWakeLock(); // Relâcher le wakelock en fin de simulation
+                    audioFeedback.textContent = "Simulation terminée.";
                     return;
-
-
-
                 }
-
-
 
                 const target = currentCircuitData[currentStopIndex];
-
-
-
                 const dLat = target.latitude - simLat;
-
-
-
                 const dLon = target.longitude - simLon;
-
-
-
                 const dist = Math.sqrt(dLat*dLat + dLon*dLon);
 
-
-
-
-
-
-
-                if (dist > 0.0001) {
-
-
-
+                if (dist > 0.0001) { // Si la distance est encore significative
                     simLat += (dLat / dist) * stepSize;
-
-
-
                     simLon += (dLon / dist) * stepSize;
-
-
-
+                } else {
+                    // Si très proche de la cible, "coller" à la cible pour éviter de la dépasser
+                    simLat = target.latitude;
+                    simLon = target.longitude;
                 }
-
-
-
                 updateMap(simLat, simLon);
-
-
-
                 checkStopTrigger(simLat, simLon);
-
-
-
             }, 100);
-
-
-
         }
-
-
-
-
-
-
 
         // --- COEUR DU SYSTÈME ---
-
-
-
         function calculateDistance(lat1, lon1, lat2, lon2) {
-
-
-
             const R = 6371e3;
-
-
-
             const φ1 = lat1 * Math.PI / 180;
-
-
-
             const φ2 = lat2 * Math.PI / 180;
-
-
-
             const Δφ = (lat2 - lat1) * Math.PI / 180;
-
-
-
             const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-
-
             const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-
-
-
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-
-
         }
 
+        function checkStopTrigger(lat, lon) {
+            const nextStop = currentCircuitData[currentStopIndex];
+            if (!nextStop) {
+                currentStopName.textContent = "TERMINUS";
+                nextStopName.textContent = "---";
+                distanceDisplay.textContent = "0 m";
+                btnReplay.disabled = true;
+                btnPlayPause.disabled = true;
+                if (watchID) navigator.geolocation.clearWatch(watchID);
+                if (simulationInterval) clearInterval(simulationInterval); // Nettoyer l'intervalle de simulation
+                stopProgressTracking(); // Assurer que la barre de progression s'arrête
+                releaseWakeLock();
+                return;
+            }
+            const dist = calculateDistance(lat, lon, nextStop.latitude, nextStop.longitude);
+            distanceDisplay.textContent = Math.round(dist) + " m";
 
-
-
-
-
-
- function checkStopTrigger(lat, lon) {
-    const nextStop = currentCircuitData[currentStopIndex];
-    if (!nextStop) {
-        currentStopName.textContent = "TERMINUS";
-        nextStopName.textContent = "---";
-        distanceDisplay.textContent = "0 m";
-        btnReplay.disabled = true;
-        btnPlayPause.disabled = true; // Désactiver le bouton Play/Pause
-        if (watchID) navigator.geolocation.clearWatch(watchID);
-        releaseWakeLock();
-        return;
-    }
-    const dist = calculateDistance(lat, lon, nextStop.latitude, nextStop.longitude);
-    distanceDisplay.textContent = Math.round(dist) + " m";
-
-    // Mettre à jour l'état des boutons manuels en fonction de l'état actuel de l'audio
-    if (isAudioPlaying || isAudioPaused) { // Actif si en lecture ou en pause
-        btnReplay.disabled = false;
-        btnPlayPause.disabled = false;
-        if (isAudioPaused) {
-            btnPlayPause.textContent = "▶️ Play";
-            btnPlayPause.classList.add('paused');
-        } else {
-            btnPlayPause.textContent = "⏸️ Pause";
-            btnPlayPause.classList.remove('paused');
-        }
-    } else { // Inactif si aucun audio n'est joué/pausé
-        btnReplay.disabled = true;
-        btnPlayPause.disabled = true;
-        btnPlayPause.textContent = "⏯️ Pause/Play"; // Texte par défaut quand inactif
-        btnPlayPause.classList.remove('paused');
-    }
-
-    // Déclenchement de l'audio si proche de l'arrêt ET qu'aucun audio n'est déjà en cours ou en pause
-    if (dist <= nextStop.triggerRadius && !isAudioPlaying && !isAudioPaused) {
-        playAudio(nextStop);
-        // Les mises à jour de isAudioPlaying, isAudioPaused, audioFeedback
-        // et l'activation des boutons sont maintenant gérées directement dans playAudio().
-    }
-}
-
-
-
-
-
-
-        function playAudio(stop) {
-
-  // Utilisation du chemin standard assets/audio/
-            audioPlayer.src = stop.file ? ('assets/audio/' + stop.file) : '';
-            currentStopName.textContent = stop.name;
-           
-            isAudioPlaying = true; // L'audio est en cours de lecture
-            isAudioPaused = false; // L'audio n'est pas en pause
-            btnPlayPause.textContent = "⏸️ Pause";
-            btnPlayPause.classList.remove('paused');
-            btnReplay.disabled = false;
-            btnPlayPause.disabled = false;
-
-
-startProgressTracking();
-var playPromise = audioPlayer.play();
-
-if (playPromise !== undefined) {
-
-    playPromise.then(_ => { })
- .catch(error => {
- console.error("Auto-play bloqué :", error);
-  audioFeedback.textContent = "⚠️ CLIQUEZ ICI POUR ACTIVER LE SON";
-document.body.addEventListener('click', function unlock() { 
-
-    audioPlayer.play();
-     document.body.removeEventListener('click', unlock);
-    }, { once: true });
- });
- }
-
-            audioPlayer.onended = () => {
-                isAudioPlaying = false;
-                isAudioPaused = false; // Réinitialiser l'état de pause
-                currentStopIndex++;
-                updateNextStopMarker();
-                stopProgressTracking();
-               
-                if (currentCircuitData[currentStopIndex]) {
-     nextStopName.textContent = currentCircuitData[currentStopIndex].name;
-      audioFeedback.textContent = "En route vers le prochain arrêt...";
-                } else {
-                    nextStopName.textContent = "FIN";
- audioFeedback.textContent = "Circuit terminé. Bonne journée !";
-  releaseWakeLock();
- }
-                btnReplay.disabled = true;
-                btnPlayPause.disabled = true; // Désactiver Play/Pause à la fin
-                btnPlayPause.textContent = "⏸️ Pause"; // Réinitialiser le texte
-                btnPlayPause.classList.remove('paused');
-            };
-
-
-
-        }
-
-
-
-
-
-
-
-       // Nouvelle Version de replayAudio()
-
-function replayAudio() {
-            const stopToReplay = currentCircuitData[currentStopIndex]; // Toujours rejouer l'arrêt ACTUEL
-
-            if (stopToReplay) {
-                audioPlayer.pause(); // Assure une pause propre
-                audioPlayer.currentTime = 0; // Remet à zéro
-                isAudioPaused = false; // Ne pas être en pause lors d'un replay
-                playAudio(stopToReplay); // Relance la lecture (cela mettra isAudioPlaying à true)
-                audioFeedback.textContent = `🔁 REPLAY : ${stopToReplay.name}`;
+            // Mettre à jour l'état des boutons manuels en fonction de l'état actuel de l'audio
+            if (isAudioPlaying || isAudioPaused) {
                 btnReplay.disabled = false;
                 btnPlayPause.disabled = false;
-                btnPlayPause.textContent = "⏸️ Pause"; // Afficher Pause après replay
+                if (isAudioPaused) {
+                    btnPlayPause.textContent = "▶️ Play";
+                    btnPlayPause.classList.add('paused');
+                } else {
+                    btnPlayPause.textContent = "⏸️ Pause";
+                    btnPlayPause.classList.remove('paused');
+                }
+            } else {
+                btnReplay.disabled = true;
+                btnPlayPause.disabled = true;
+                btnPlayPause.textContent = "⏯️ Pause/Play";
                 btnPlayPause.classList.remove('paused');
+            }
+
+            // Déclenchement de l'audio si proche de l'arrêt ET qu'aucun audio n'est déjà en cours ou en pause
+            if (dist <= nextStop.triggerRadius && !isAudioPlaying && !isAudioPaused) {
+                playAudio(nextStop);
+            }
+        }
+
+        function playAudio(stop) {
+            audioPlayer.src = stop.file ? ('assets/audio/' + stop.file) : '';
+            currentStopName.textContent = stop.name;
+            
+            isAudioPlaying = true;
+            isAudioPaused = false;
+            btnPlayPause.textContent = "⏸️ Pause";
+            btnPlayPause.classList.remove('paused');
+            btnReplay.disabled = false;
+            btnPlayPause.disabled = false;
+
+            // Reset progress bar on new audio play
+            progressBar.style.width = '0%';
+            startProgressTracking();
+
+            var playPromise = audioPlayer.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Audio started successfully
+                    audioFeedback.textContent = `▶️ LECTURE : ${stop.name}`;
+                    btnActivateAudio.style.display = 'none'; // Cacher le bouton d'activation
+                }).catch(error => {
+                    console.error("Auto-play bloqué :", error);
+                    isAudioPlaying = false; // Ne pas considérer comme jouant si bloqué
+                    isAudioPaused = false; // Ni en pause
+                    audioFeedback.textContent = "⚠️ Le son est bloqué. Cliquez sur le bouton ci-dessous pour activer.";
+                    
+                    // Afficher un bouton spécifique pour activer l'audio
+                    btnActivateAudio.style.display = 'block';
+                    btnActivateAudio.onclick = function() {
+                        audioPlayer.play().then(() => {
+                            isAudioPlaying = true;
+                            isAudioPaused = false;
+                            audioFeedback.textContent = `▶️ LECTURE : ${stop.name}`;
+                            btnPlayPause.textContent = "⏸️ Pause";
+                            btnPlayPause.classList.remove('paused');
+                            btnReplay.disabled = false;
+                            btnPlayPause.disabled = false;
+                            startProgressTracking();
+                            btnActivateAudio.style.display = 'none'; // Cacher le bouton une fois activé
+                        }).catch(err => {
+                            console.error("Échec de l'activation manuelle :", err);
+                            audioFeedback.textContent = "Échec de l'activation. Réessayez.";
+                        });
+                    };
+
+                    // Désactiver les contrôles de base tant que l'audio n'est pas activé
+                    btnReplay.disabled = true;
+                    btnPlayPause.disabled = true;
+                    btnPlayPause.textContent = "⏯️ Pause/Play";
+                    btnPlayPause.classList.remove('paused');
+                    stopProgressTracking(); // Arrêter la progression si l'audio est bloqué
+                });
+            }
+
+            audioPlayer.onended = () => {
+                isAudioPlaying = false;
+                isAudioPaused = false;
+                currentStopIndex++;
+                updateNextStopMarker();
+                stopProgressTracking();
+                
+                if (currentCircuitData && currentCircuitData[currentStopIndex]) {
+                    nextStopName.textContent = currentCircuitData[currentStopIndex].name;
+                    audioFeedback.textContent = "En route vers le prochain arrêt...";
+                } else {
+                    nextStopName.textContent = "FIN";
+                    audioFeedback.textContent = "Circuit terminé. Bonne journée !";
+                    releaseWakeLock();
+                }
+                btnReplay.disabled = true;
+                btnPlayPause.disabled = true;
+                btnPlayPause.textContent = "⏯️ Pause/Play";
+                btnPlayPause.classList.remove('paused');
+            };
+        }
+
+        function replayAudio() {
+            const stopToReplay = currentCircuitData[currentStopIndex];
+
+            if (stopToReplay) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+                isAudioPaused = false;
+                playAudio(stopToReplay);
+                audioFeedback.textContent = `🔁 REPLAY : ${stopToReplay.name}`;
+                // Les états des boutons seront mis à jour par playAudio()
             } else {
                 console.warn("Aucun arrêt à rejouer.");
             }
         }
 
-
-
-
-
-
-function togglePlayPause() {
+        function togglePlayPause() {
             if (isAudioPlaying) {
                 audioPlayer.pause();
-              
                 isAudioPlaying = false;
                 isAudioPaused = true;
                 audioFeedback.textContent = `⏸️ PAUSE : ${currentCircuitData[currentStopIndex].name}`;
                 btnPlayPause.textContent = "▶️ Play";
                 btnPlayPause.classList.add('paused');
-                stopProgressTracking(); // Arrêter la barre de progression en pause
+                stopProgressTracking();
             } else if (isAudioPaused) {
                 audioPlayer.play();
                 isAudioPlaying = true;
@@ -1849,55 +802,23 @@ function togglePlayPause() {
                 audioFeedback.textContent = `▶️ LECTURE : ${currentCircuitData[currentStopIndex].name}`;
                 btnPlayPause.textContent = "⏸️ Pause";
                 btnPlayPause.classList.remove('paused');
-                startProgressTracking(); // Reprendre la barre de progression
+                startProgressTracking();
             }
-            btnReplay.disabled = false; // Le bouton Rejouer reste toujours activé quand il y a un audio en cours/pause
-            btnPlayPause.disabled = false; // Le bouton Play/Pause reste activé
+            btnReplay.disabled = false;
+            btnPlayPause.disabled = false;
         }
-
-
-
-    </script>
-
-
+   
+   </script>
 
     <script>
-
-
-
       if ('serviceWorker' in navigator) {
-
-
-
         window.addEventListener('load', () => {
-
-
-
           navigator.serviceWorker.register('sw.js')
-
-
-
             .then(reg => console.log('Service Worker enregistré !', reg))
-
-
-
             .catch(err => console.log('Erreur SW :', err));
-
-
-
         });
-
-
-
       }
-
-
-
     </script>
 
-
-
 </body>
-
-
 </html>
