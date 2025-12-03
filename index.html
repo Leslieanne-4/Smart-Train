@@ -6,7 +6,7 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Smart Petit Train - Dahomey Discovery</title>
 
@@ -45,11 +45,10 @@
             margin: 0;
             padding: 0;
             height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             background-color: #f0f0f0;
         }
-
-        /* ========================================================= */
+      /* ========================================================= */
         /* 1. ÉCRAN D'ACCUEIL */
         /* ========================================================= */
         #home-screen {
@@ -207,37 +206,37 @@
 
         #map { width: 100%; height: 100%; z-index: 1; }
 
+        /* Styles pour mobile (par défaut ou via media query si tu l'as déjà) */
         #info-panel {
+
             position: absolute;
-            bottom: 0; /* Positionner au bas complet de l'écran sur mobile */
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 35%; /* Hauteur initiale réduite à 35% de l'écran sur mobile */
-            min-height: 150px; /* Une hauteur minimale pour toujours voir les infos clés */
-            transition: height 0.3s ease-out; /* Ajoute une transition pour une animation fluide */
-            cursor: grab; /* Indique qu'il peut être glissé */
-            transform: none; /* Annuler le translateX */
-            max-width: none; /* Annuler le max-width sur mobile */
-            max-height: 80%; /* Limiter la hauteur à 80% de l'écran sur mobile */
-            overflow-y: auto; /* Permettre le défilement si le contenu dépasse */
-            background: rgba(255, 255, 255, 0.95);
-            -webkit-backdrop-filter: blur(10px); /* Ajout pour Safari */
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-top-left-radius: 15px; /* Arrondir juste les coins supérieurs */
-            border-top-right-radius: 15px;
-            border-bottom-left-radius: 0; /* Supprimer l'arrondi en bas */
-            border-bottom-right-radius: 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.2); /* Ombre vers le haut */
-            z-index: 999;
-            border-top: 4px solid #993300;
-        }
-        #info-panel.expanded {
-        height: 80%; /* Hauteur quand le panneau est déplié */
-        cursor: grabbing;
-        }
-        #info-panel.collapsed {
-        height: 35%; /* Hauteur quand le panneau est replié (même que la hauteur initiale) */
+            min-height: 150px;
+    /* ... autres styles pour mobile ... */
+}
+
+/* Styles pour écrans larges (PC) */
+@media (min-width: 900px) { /* Applique ces styles si la largeur de l'écran est supérieure à 900px */
+    #info-panel {
+        position: absolute; /* ou relative si tu veux qu'il participe au flux */
+        top: 10px; /* Positionne-le en haut */
+        right: 10px; /* Positionne-le à droite pour ne pas cacher les contrôles de la carte */
+        left: auto; /* Annule left: 0 */
+        width: 300px; /* Une largeur fixe pour PC */
+        height: auto; /* Hauteur ajustée au contenu */
+        max-height: calc(100vh - 20px); /* Pour qu'il ne dépasse pas l'écran */
+        overflow-y: auto; /* Si le contenu est trop long, il défilera */
+        /* Assure-toi que toutes les propriétés spécifiques au mobile sont annulées ou remplacées */
+        cursor: default; /* Plus de curseur grab pour le glissement */
+    }
+    /* Désactiver les classes de glissement sur PC si elles posent problème */
+    #info-panel.expanded,
+    #info-panel.collapsed {
+        height: auto;
+    }
 }
 
         .info-row {
