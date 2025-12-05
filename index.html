@@ -833,57 +833,74 @@
             btnPlayPause.disabled = false;
         }
    
-        // --- GESTION DU PANNEAU GLISSANT (Info Panel) ---
-        const infoPanel = document.getElementById('info-panel');
-        let startY;
-        let startHeight;
-        let isDragging = false;
+       // --- GESTION DU PANNEAU GLISSANT (Info Panel) ---
+const infoPanel = document.getElementById('info-panel');
+
+// 1. DÉTECTION MOBILE : On vérifie si l'écran est petit (< 900px)
+const isMobile = window.matchMedia('(max-width: 900px)');
+
+if (isMobile.matches) {
+    // Tout ce code ne s'exécutera QUE sur un téléphone mobile
+    let startY;
+    let startHeight;
+    let isDragging = false;
+    let isSwiping = false; // Variable pour savoir si on a vraiment bougé le doigt
+
+    // État initial replié sur mobile
+    infoPanel.classList.add('collapsed');
+
+    infoPanel.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        isSwiping = false; // On remet à zéro au début du toucher
+        startY = e.touches[0].clientY;
+        startHeight = infoPanel.offsetHeight;
+        infoPanel.style.transition = 'none';
+        infoPanel.classList.remove('collapsed', 'expanded');
+        infoPanel.style.cursor = 'grabbing';
+    });
+
+    infoPanel.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
         
-        // Initialiser le panneau en mode "replié"
-        if (window.innerWidth < 900) { // S'applique uniquement sur mobile
-        infoPanel.classList.add('collapsed');
-    }
+        const currentY = e.touches[0].clientY;
+        const deltaY = currentY - startY;
 
-infoPanel.addEventListener('touchstart', (e) => {
-    if (window.innerWidth >= 900) return; // Ne pas activer sur PC
+        // Si on a bougé de plus de 5 pixels, c'est un vrai glissement (swipe)
+        if (Math.abs(deltaY) > 5) {
+            isSwiping = true;
+        }
 
-    isDragging = true;
-    startY = e.touches[0].clientY;
-    startHeight = infoPanel.offsetHeight;
-    infoPanel.style.transition = 'none'; // Désactiver la transition pendant le glissement
-    infoPanel.classList.remove('collapsed', 'expanded'); // Supprimer les classes pour laisser JS gérer la hauteur
-    infoPanel.style.cursor = 'grabbing';
-});
+        let newHeight = startHeight - deltaY;
+        newHeight = Math.max(150, Math.min(window.innerHeight * 0.8, newHeight));
+        infoPanel.style.height = `${newHeight}px`;
+    });
 
-infoPanel.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
+    infoPanel.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        infoPanel.style.transition = 'height 0.3s ease-out';
+        infoPanel.style.cursor = 'grab';
 
-    const deltaY = e.touches[0].clientY - startY;
-    let newHeight = startHeight - deltaY;
+        // SÉCURITÉ IMPORTANTE :
+        // Si l'utilisateur n'a pas vraiment glissé (juste cliqué ou touché à peine),
+        // on ne change rien et on sort de la fonction !
+        if (!isSwiping) {
+            infoPanel.style.height = ''; // On laisse le CSS gérer
+            return; 
+        }
 
-    // Limiter la hauteur entre 150px et 80% de la fenêtre
-    newHeight = Math.max(150, Math.min(window.innerHeight * 0.8, newHeight));
+        // Sinon, on gère l'ouverture/fermeture
+        const currentHeight = infoPanel.offsetHeight;
+        if (currentHeight < window.innerHeight * 0.5) {
+            infoPanel.classList.add('collapsed');
+        } else {
+            infoPanel.classList.add('expanded');
+        }
+        infoPanel.style.height = ''; // Nettoyage final
+    });
+}
 
-    infoPanel.style.height = `${newHeight}px`;
-});
 
-infoPanel.addEventListener('touchend', () => {
-    if (!isDragging) return;
-
-    isDragging = false;
-    infoPanel.style.transition = 'height 0.3s ease-out'; // Réactiver la transition
-    infoPanel.style.cursor = 'grab';
-
-    // Décider si le panneau doit être replié ou déplié en fonction de sa hauteur finale
-    const currentHeight = infoPanel.offsetHeight;
-    if (currentHeight < window.innerHeight * 0.5) { // Si moins de 50%, replier
-        infoPanel.classList.add('collapsed');
-    } else { // Sinon, déplier
-        infoPanel.classList.add('expanded');
-    }
-});
-
- 
    // --- NOUVELLES FONCTIONS POUR LA NAVIGATION ---
 
 function showHomeScreen() {
