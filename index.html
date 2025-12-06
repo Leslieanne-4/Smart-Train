@@ -215,23 +215,41 @@
             width: 100%;
             height: 35%; /* Hauteur initiale réduite à 35% de l'écran sur mobile */
             min-height: 150px;
+            background-color: white;  /* Rend le fond blanc opaque */
+            z-index: 9999;            /* Force le panneau à passer DEVANT la carte */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2); /* Ajoute une petite ombre pour bien le voir */
     /* ... autres styles pour mobile ... */
 }
 
 /* Styles pour écrans larges (PC) */
 @media (min-width: 900px) { /* Applique ces styles si la largeur de l'écran est supérieure à 900px */
-    #info-panel {
-        position: absolute; /* ou relative si tu veux qu'il participe au flux */
-        top: 10px; /* Positionne-le en haut */
-        right: 10px; /* Positionne-le à droite pour ne pas cacher les contrôles de la carte */
-        left: auto; /* Annule left: 0 */
-        width: 300px; /* Une largeur fixe pour PC */
-        height: auto; /* Hauteur ajustée au contenu */
-        max-height: calc(100vh - 20px); /* Pour qu'il ne dépasse pas l'écran */
-        overflow-y: auto; /* Si le contenu est trop long, il défilera */
-        /* Assure-toi que toutes les propriétés spécifiques au mobile sont annulées ou remplacées */
-        cursor: default; /* Plus de curseur grab pour le glissement */
-    }
+    /* DANS LE BLOC @media (min-width: 900px) */
+
+#info-panel {
+    position: absolute;
+    /* On annule le bas, on le met en haut */
+    bottom: auto; 
+    top: 100px; 
+    
+    /* CHANGEMENT ICI : On le met à DROITE au lieu de gauche */
+    left: auto;  
+    right: 20px; 
+
+    transform: none;
+    width: 320px; /* Un peu plus large pour respirer */
+    max-height: calc(100% - 40px);
+    
+    /* ESTHÉTIQUE MODERNE (Voir point suivant) */
+    background-color: rgba(255, 255, 255, 0.95); /* Légère transparence classe */
+    backdrop-filter: blur(5px); /* Effet de flou derrière (très moderne) */
+    border-radius: 20px; /* Coins bien arrondis */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* Ombre douce et profonde */
+    border: 1px solid rgba(0,0,0,0.05); /* Bordure très subtile */
+    
+    overflow-y: auto;
+    padding: 20px; /* Plus d'espace intérieur */
+    z-index: 9999;
+}
     /* Désactiver les classes de glissement sur PC si elles posent problème */
     #info-panel.expanded,
     #info-panel.collapsed {
@@ -240,18 +258,33 @@
 }
 
         .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px dashed #ddd;
-            padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    /* On supprime la ligne pointillée moche */
+    border-bottom: none; 
+    padding-bottom: 0;
+
         }
         .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        #current-stop-label { font-size: 0.8em; color: #777; text-transform: uppercase; letter-spacing: 1px; }
-        #current-stop-name { font-size: 1.8em; font-weight: 800; color: #CC0000; line-height: 1.1; }
+        #current-stop-label { 
+    font-size: 0.75em; 
+    color: #888; 
+    font-weight: 600;
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; /* Espacement des lettres plus moderne */
+    margin-bottom: 2px;
+}
 
+#current-stop-name { 
+    font-size: 1.6em; /* Un peu plus petit pour être élégant */
+    font-weight: 700; 
+    color: #222; /* Noir doux au lieu de rouge agressif */
+    line-height: 1.2;
+    margin-bottom: 15px; /* Espace après le gros titre */
+}
         .secondary-info { font-size: 0.95em; color: #555; }
         .highlight-info { color: #DAA520; font-weight: bold; font-size: 1.1em; }
 
@@ -305,37 +338,21 @@
         #manual-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* Nouveau style pour le bouton d'activation audio */
-        #btn-activate-audio {
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            display: none; /* Caché par défaut */
-        }
+    #btn-activate-audio {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        width: 100%;
+        display: none; /* Caché par défaut */
+    }
 
-        /* --- RESPONSIVE PC --- */
-        @media (min-width: 900px) {
-            #info-panel {
-                bottom: auto; /* Annule le bottom: 0; du mode mobile */
-                top: 20px; /* Positionne en haut */
-                left: 20px; /* Positionne à gauche */
-                transform: none; /* Annule tout transform (pas que le translateX) */
-                width: 350px; /* Largeur fixe pour PC */
-                max-width: 600px; /* Réintroduire le max-width pour PC */
-                max-height: calc(100% - 40px); /* Hauteur pour PC */
-                overflow-y: auto;
-                border-radius: 15px; /* Réintroduire l'arrondi complet des coins pour PC */
-                box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Réinitialiser l'ombre vers le bas pour PC */
-            }
-        }
-    </style>
-
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</style>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 </head>
 <body>
@@ -845,9 +862,6 @@ if (isMobile.matches) {
     let startHeight;
     let isDragging = false;
     let isSwiping = false; // Variable pour savoir si on a vraiment bougé le doigt
-
-    // État initial replié sur mobile
-    infoPanel.classList.add('collapsed');
 
     infoPanel.addEventListener('touchstart', (e) => {
         isDragging = true;
