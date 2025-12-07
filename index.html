@@ -48,6 +48,14 @@
             overflow-x: hidden;
             background-color: #f0f0f0;
         }
+
+       /* Empêche le zoom tactile accidentel et la sélection de texte */
+       body {
+    touch-action: none; /* Empêche le navigateur de zoomer/scroller la page entière */
+    user-select: none;  /* Empêche de sélectionner le texte en tapotant partout */
+    /* ... vos autres styles body ... */
+}
+
       /* ========================================================= */
         /* 1. ÉCRAN D'ACCUEIL */
         /* ========================================================= */
@@ -206,54 +214,59 @@
 
         #map { width: 100%; height: 100%; z-index: 1; }
 
-        /* Styles pour mobile (par défaut ou via media query si tu l'as déjà) */
-        #info-panel {
+        /* ========================================= */
+/* STYLE DU PANNEAU D'INFORMATION (UNIFIÉ) */
+/* ========================================= */
 
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 35%; /* Hauteur initiale réduite à 35% de l'écran sur mobile */
-            min-height: 150px;
-            background-color: white;  /* Rend le fond blanc opaque */
-            z-index: 9999;            /* Force le panneau à passer DEVANT la carte */
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.2); /* Ajoute une petite ombre pour bien le voir */
-    /* ... autres styles pour mobile ... */
-}
-
-/* Styles pour écrans larges (PC) */
-@media (min-width: 900px) { /* Applique ces styles si la largeur de l'écran est supérieure à 900px */
-    /* DANS LE BLOC @media (min-width: 900px) */
-
+/* 1. STYLE PAR DÉFAUT (MOBILE) 📱 */
 #info-panel {
     position: absolute;
-    /* On annule le bas, on le met en haut */
-    bottom: auto; 
-    top: 100px; 
+    bottom: 0;           /* Collé en bas */
+    left: 0;             /* Collé à gauche */
+    width: 100%;         /* Toute la largeur */
+    height: 35%;         /* Hauteur de départ */
+    min-height: 150px;
     
-    /* CHANGEMENT ICI : On le met à DROITE au lieu de gauche */
-    left: auto;  
-    right: 20px; 
-
+    /* Design Mobile */
+    background-color: white;
+    border-radius: 20px 20px 0 0; /* Arrondi juste en haut */
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+    z-index: 9999;       /* Au dessus de la carte */
+    
+    /* Important pour le glissement */
+    transition: height 0.3s ease-out;
+    padding: 20px;
+    overflow-y: auto;    /* Permet de scroller si le texte est long */
+    
+    /* Annule les styles PC potentiels */
+    top: auto;
+    right: auto;
+    max-height: none;
     transform: none;
-    width: 320px; /* Un peu plus large pour respirer */
-    max-height: calc(100% - 40px);
-    
-    /* ESTHÉTIQUE MODERNE (Voir point suivant) */
-    background-color: rgba(255, 255, 255, 0.95); /* Légère transparence classe */
-    backdrop-filter: blur(5px); /* Effet de flou derrière (très moderne) */
-    border-radius: 20px; /* Coins bien arrondis */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* Ombre douce et profonde */
-    border: 1px solid rgba(0,0,0,0.05); /* Bordure très subtile */
-    
-    overflow-y: auto;
-    padding: 20px; /* Plus d'espace intérieur */
-    z-index: 9999;
 }
-    /* Désactiver les classes de glissement sur PC si elles posent problème */
-    #info-panel.expanded,
-    #info-panel.collapsed {
-        height: auto;
+
+/* 2. STYLE ÉCRAN LARGE (PC) 💻 */
+@media (min-width: 900px) {
+    #info-panel {
+        /* On décolle du bas */
+        bottom: auto; 
+        
+        /* On place en HAUT à DROITE */
+        top: 100px;  
+        right: 20px; 
+        left: auto;  
+        
+        /* Dimensions PC */
+        width: 350px; 
+        height: auto;           /* La hauteur s'adapte au contenu */
+        max-height: calc(100% - 120px); /* Ne dépasse pas l'écran */
+        
+        /* Design PC "Flottant" */
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        border-radius: 20px;    /* Arrondi partout */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border: 1px solid rgba(0,0,0,0.05);
     }
 }
 
