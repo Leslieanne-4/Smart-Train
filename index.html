@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 
+
 <html lang="fr">
+
 
 <head>
 
+
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
 
     <title>Smart Petit Train - Dahomey Discovery</title>
 
+
     <link rel="manifest" href="manifest.json">
+
 
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self' data: blob:;
@@ -19,35 +26,48 @@
         font-src 'self' https://fonts.gstatic.com;
         img-src 'self' data: blob: https://*.tile.openstreetmap.org;
         media-src 'self' assets/audio/;
-        connect-src 'self' https://nominatim.openstreetmap.org;
-    ">
+        connect-src 'self' https://nominatim.openstreetmap.org ;
+        ">
+
+
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 
     <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 
 
+
+
     <style>
-    
+   
         /* ========================================================= */
-    
+   
         /* CONFIGURATION GÉNÉRALE */
-    
+   
         /* ========================================================= */
-    
+   
         * { box-sizing: border-box; }
 
-        body {
 
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow-x: hidden;
-            background-color: #f0f0f0;
-        }
+        html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Empêche le site de "sauter" vers le haut ou le bas */
+    position: fixed;  /* Verrouille l'interface pour qu'elle ne bouge plus */
+}
+
+
+body {
+    font-family: 'Times new roman', sans-serif;
+    background-color: #f0f0f0;
+}
+
 
        /* Empêche le zoom tactile accidentel et la sélection de texte */
        body {
@@ -55,6 +75,7 @@
     user-select: none;  /* Empêche de sélectionner le texte en tapotant partout */
     /* ... vos autres styles body ... */
 }
+
 
       /* ========================================================= */
         /* 1. ÉCRAN D'ACCUEIL */
@@ -76,7 +97,7 @@
             padding: 20px;
             z-index: 100;
         }
-        
+       
         @media (max-width: 768px) { /* Pour les écrans de largeur inférieure ou égale à 768px */
     #home-screen {
         background-image: url('assets/img/Petit_train_mobile.jpg'); /* Version optimisée pour mobile */
@@ -93,6 +114,7 @@
             z-index: 1;
         }
 
+
         #home-content {
             position: relative;
             z-index: 2;
@@ -100,6 +122,7 @@
             max-width: 500px;
             text-align: center;
         }
+
 
         #dahomey-logo-home {
             max-width: 180px;
@@ -110,12 +133,14 @@
             padding: 10px;
         }
 
+
         .home-title {
-            color: white;
+            color: rgb(255, 245, 217);
             font-size: 2em;
             margin-bottom: 30px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
+
 
         .circuit-card {
             background: white;
@@ -133,20 +158,34 @@
             width: 100%;
         }
 
+
+.dashboard {
+    background-color: white;
+    padding: 15px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+    flex-shrink: 0; /* Empêche l'écrasement vu dans ta vidéo */
+    z-index: 1000;
+}
         .circuit-card:hover {
             transform: translateX(5px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
+
         .circuit-card h3 { margin: 0; font-size: 1.2em; color: #333; }
         .circuit-card span { font-size: 0.9em; color: #666; }
         .chevron-icon { font-size: 1.5em; font-weight: bold; }
 
+
         #btn-start-day { border-left-color: #CC0000; }
         #btn-start-day .chevron-icon { color: #CC0000; }
 
+
         #btn-start-night { border-left-color: #DAA520; }
         #btn-start-night .chevron-icon { color: #DAA520; }
+
 
         /* Bouton Simulation */
         #btn-simulation {
@@ -162,19 +201,28 @@
             box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
         }
 
+
         #btn-simulation:hover { background-color: #1976D2; }
+
 
         /* ========================================================= */
         /* 2. ÉCRAN DE SUIVI (STYLE DASHBOARD MAP) */
         /* ========================================================= */
 
+
         #tracking-screen {
-            display: none;
-            height: 100vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
+    display: none; /* Reste ainsi, le JS l'affichera au clic */
+    flex-direction: column;
+    height: 100vh;      /* Force l'écran à faire la hauteur exacte du téléphone */
+    width: 100vw;       /* Force la largeur exacte */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;   /* Interdit tout ce qui dépasse de l'écran */
+    position: fixed;    /* Bloque l'écran pour éviter le "saut" au moment du zoom */
+    top: 0;
+    left: 0;
+}
+
 
         #top-bar {
             height: 80px;
@@ -188,7 +236,9 @@
             flex-shrink: 0;
         }
 
+
         #top-logo { height: 50px; }
+
 
         .status-badge {
             background: #4CAF50;
@@ -202,9 +252,11 @@
             gap: 5px;
         }
 
+
         .status-badge.offline { background: #F44336; }
         .status-badge.simu { background: #2196F3; }
         .status-badge.wake-lock-on { background: #8BC34A; }
+
 
         #main-layout {
             flex-grow: 1;
@@ -212,55 +264,60 @@
             display: flex;
         }
 
+
         #map { width: 100%; height: 100%; z-index: 1; }
+
 
         /* ========================================= */
 /* STYLE DU PANNEAU D'INFORMATION (UNIFIÉ) */
 /* ========================================= */
 
-/* 1. STYLE PAR DÉFAUT (MOBILE) 📱 */
+
 #info-panel {
-    position: absolute;
-    bottom: 0;           /* Collé en bas */
-    left: 0;             /* Collé à gauche */
-    width: 100%;         /* Toute la largeur */
-    height: 35%;         /* Hauteur de départ */
-    min-height: 150px;
-    
-    /* Design Mobile */
+    /* 1. ON BLOQUE LA POSITION POUR ÉVITER LES SAUTS */
+    position: fixed;      /* Fixé par rapport à l'écran, pas par rapport à la carte */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+   
+    /* 2. ON UTILISE UNE HAUTEUR FIXE MAIS ON LE CACHE PLUS BAS */
+    height: 60vh;         /* Il peut monter jusqu'à 60% de l'écran */
+    max-height: 500px;    /* Sécurité pour les grands écrans */
+   
+    /* 3. DESIGN (On garde tes réglages) */
     background-color: white;
-    border-radius: 20px 20px 0 0; /* Arrondi juste en haut */
+    border-radius: 20px 20px 0 0;
     box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
-    z-index: 9999;       /* Au dessus de la carte */
-    
-    /* Important pour le glissement */
-    transition: height 0.3s ease-out;
+    z-index: 9999;
     padding: 20px;
-    overflow-y: auto;    /* Permet de scroller si le texte est long */
-    
-    /* Annule les styles PC potentiels */
+    overflow-y: auto;
+   
+    /* 4. LE SECRET ANTI-DÉFORMATION : LE TRANSFORM */
+    transition: transform 0.3s ease-out; /* Beaucoup plus fluide que "height" */
+    transform: translateY(70%); /* Par défaut, il dépasse un peu en bas (le bouton DETAILS dépasse) */
+   
+    /* Annule les styles PC */
     top: auto;
     right: auto;
-    max-height: none;
-    transform: none;
 }
+
 
 /* 2. STYLE ÉCRAN LARGE (PC) 💻 */
 @media (min-width: 900px) {
     #info-panel {
         /* On décolle du bas */
-        bottom: auto; 
-        
+        bottom: auto;
+       
         /* On place en HAUT à DROITE */
         top: 100px;  
-        right: 20px; 
+        right: 20px;
         left: auto;  
-        
+       
         /* Dimensions PC */
-        width: 350px; 
+        width: 350px;
         height: auto;           /* La hauteur s'adapte au contenu */
         max-height: calc(100% - 120px); /* Ne dépasse pas l'écran */
-        
+       
         /* Design PC "Flottant" */
         background-color: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(5px);
@@ -270,36 +327,41 @@
     }
 }
 
+
         .info-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     /* On supprime la ligne pointillée moche */
-    border-bottom: none; 
+    border-bottom: none;
     padding-bottom: 0;
+
 
         }
         .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        #current-stop-label { 
-    font-size: 0.75em; 
-    color: #888; 
+
+        #current-stop-label {
+    font-size: 0.75em;
+    color: #888;
     font-weight: 600;
-    text-transform: uppercase; 
+    text-transform: uppercase;
     letter-spacing: 1.5px; /* Espacement des lettres plus moderne */
     margin-bottom: 2px;
 }
 
-#current-stop-name { 
+
+#current-stop-name {
     font-size: 1.6em; /* Un peu plus petit pour être élégant */
-    font-weight: 700; 
+    font-weight: 700;
     color: #222; /* Noir doux au lieu de rouge agressif */
     line-height: 1.2;
     margin-bottom: 15px; /* Espace après le gros titre */
 }
         .secondary-info { font-size: 0.95em; color: #555; }
         .highlight-info { color: #DAA520; font-weight: bold; font-size: 1.1em; }
+
 
         #audio-status-bar {
             background: #f0f0f0;
@@ -313,7 +375,9 @@
             align-items: center;
         }
 
+
         #audio-feedback { margin: 0 0 10px 0; font-size: 0.9em; font-weight: 600; }
+
 
         /* --- BARRE DE PROGRESSION --- */
         #progress-container {
@@ -325,12 +389,14 @@
             overflow: hidden;
         }
 
+
         #progress-bar {
             height: 100%;
             width: 0%;
             background: #CC0000;
             transition: width 0.1s linear;
         }
+
 
         #manual-controls { display: flex; gap: 10px; width: 100%; }
         #manual-controls button {
@@ -350,6 +416,7 @@
         #btn-stop { background-color: #CC0000; }
         #manual-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+
         /* Nouveau style pour le bouton d'activation audio */
     #btn-activate-audio {
         background-color: #007bff;
@@ -364,17 +431,51 @@
         display: none; /* Caché par défaut */
     }
 
+
+/* --- STYLE DU NOUVEAU BOUTON TOGGLE --- */
+#panel-toggle {
+    text-align: center;
+    padding: 8px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+
+/* --- CORRECTION DU PANNEAU MOBILE --- */
+@media (max-width: 900px) {
+    #info-panel {
+        /* On fixe une hauteur initiale petite */
+        height: 200px !important;
+        transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Animation fluide */
+        padding-top: 6px;
+        z-index: 9999;
+    }
+
+
+    /* Quand on ajoute la classe 'open', le panneau grandit */
+    #info-panel.open {
+        height: 60% !important; /* Prend 60% de l'écran */
+    }
+}
 </style>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+
 </head>
 <body>
+
 
     <div id="home-screen">
         <div id="home-overlay"></div>
         <div id="home-content">
             <img src="assets/img/Dahomey_Discovery_Logo.jpg" alt="Logo Dahomey" id="dahomey-logo-home">
-            <h1 class="home-title">Bienvenue, Opérateur</h1>
+            <h1 class="home-title"> Bienvenue ! </h1>
+
 
             <div id="btn-start-day" class="circuit-card" onclick="startCircuit('jour')">
                 <div>
@@ -384,6 +485,7 @@
                 <div class="chevron-icon">➤</div>
             </div>
 
+
             <div id="btn-start-night" class="circuit-card" onclick="startCircuit('nuit')">
                 <div>
                     <h3>CIRCUIT NUIT 🌙</h3>
@@ -392,9 +494,11 @@
                 <div class="chevron-icon">➤</div>
             </div>
 
+
             <button id="btn-simulation" onclick="startSimulation()">🎮 TESTER EN SIMULATION (SANS GPS)</button>
         </div>
     </div>
+
 
     <div id="tracking-screen" style="display: none !important;">
         <div id="top-bar">
@@ -410,44 +514,58 @@
     <div id="gps-status" class="status-badge">🔴 GPS OFF</div>
 </div>
 
+
         <div id="main-layout">
             <div id="map"></div>
         </div>
 
-        <div id="info-panel">
-            <div class="info-row" style="display:block;">
-                <div id="current-stop-label">Arrêt Actuel</div>
-                <div id="current-stop-name">DÉBUT DE PARCOURS</div>
-            </div>
+
+       <div id="info-panel" style="transform: translateY(70%);">
+    <div id="panel-toggle" onclick="togglePanel()">
+        <span id="toggle-icon">⬆️</span> DÉTAILS
+    </div>
+
+
+    <div class="info-row" style="display:block;">
+    <div id="current-stop-label">Arrêt Actuel</div>
+    <div id="current-stop-name">---</div>
+</div>
+
 
             <div class="info-row">
                 <span class="secondary-info">Prochain :</span>
                 <span id="next-stop-name" style="font-weight:600;">---</span>
             </div>
 
+
             <div class="info-row">
                 <span class="secondary-info">Distance :</span>
                 <span id="distance-display" class="highlight-info">---</span>
             </div>
 
+
             <div id="audio-status-bar">
                 <div id="audio-feedback">Prêt pour le départ.</div>
-                
+               
                 <div id="progress-container">
                     <div id="progress-bar"></div>
                 </div>
 
+
                 <div id="manual-controls">
                     <button id="btn-replay" disabled onclick="replayAudio()">🔁 Rejouer</button>
-                    <button id="btn-play-pause" disabled onclick="togglePlayPause()">⏯️ Pause/Play </button> 
+                    <button id="btn-play-pause" disabled onclick="togglePlayPause()">⏯️ Pause/Play </button>
                 </div>
                 <button id="btn-activate-audio">🔊 Activer le Son</button>
             </div>
         </div>
     </div>
 
+
     <script>
-        // =========================================================
+    
+       
+       // =========================================================
         // DONNÉES DU CIRCUIT JOUR (SANS PHOTOS)
         // =========================================================
         const CIRCUIT_JOUR_STOPS = [
@@ -459,6 +577,7 @@
             { id: 6, name: "Hôtel Sofitel", file: "sofitel_2.mp3", latitude: 6.349740427997271, longitude: 2.3936832955293195, triggerRadius: 400, audioDuration: 53 },
             { id: 7, name: "Fin du Trajet", file: "fin_trajet_2.mp3", latitude: 6.352701574373512, longitude: 2.407548102091667, triggerRadius: 300, audioDuration: 41 }
         ];
+
 
         // Rempli avec les mêmes données que le jour pour éviter l'erreur "Circuit vide"
         // Tu peux modifier ces données plus tard pour le circuit de nuit.
@@ -472,6 +591,7 @@
             { id: 7, name: "Fin du Trajet (Nuit)", file: "fin_trajet_2.mp3", latitude: 6.352701574373512, longitude: 2.407548102091667, triggerRadius: 300, audioDuration: 41 }
         ];
 
+
         // --- VARIABLES D'ÉTAT ---
         let currentCircuitData = null;
         let currentStopIndex = 0;
@@ -483,10 +603,11 @@
         let progressInterval = null;
         let wakeLock = null;
 
+
         const audioPlayer = new Audio();
         let map = null;
         let trainMarker = null;
-        let stopMarker = null;  
+        let stopMarker = null; 
 
         // --- ÉLÉMENTS DOM ---
         const homeScreen = document.getElementById('home-screen');
@@ -501,6 +622,7 @@
         const progressBar = document.getElementById('progress-bar');
         const btnActivateAudio = document.getElementById('btn-activate-audio'); // Récupération du nouveau bouton
 
+
         // --- ICONES MAP ---
         const trainIcon = L.divIcon({
             className: 'custom-train-icon',
@@ -509,9 +631,51 @@
             iconAnchor: [25, 25]
         });
 
+function cleanupResources() {
+    console.log("🧹 Nettoyage des ressources...");
+    
+    // 1. Nettoyer le GPS
+    if (watchID) {
+        navigator.geolocation.clearWatch(watchID);
+        watchID = null;
+        console.log("✓ GPS arrêté");
+    }
+    
+    // 2. Nettoyer la simulation
+    if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+        console.log("✓ Simulation arrêtée");
+    }
+    
+    // 3. Nettoyer la barre de progression
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+        console.log("✓ Barre de progression arrêtée");
+    }
+    
+    // 4. Arrêter l'audio
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
+    isAudioPlaying = false;
+    isAudioPaused = false;
+    progressBar.style.width = '0%';
+    console.log("✓ Audio arrêté");
+    
+    // 5. Libérer le Wake Lock
+    releaseWakeLock();
+    
+    // 6. Cacher le bouton d'activation audio
+    btnActivateAudio.style.display = 'none';
+    
+    console.log("✅ Nettoyage terminé");
+}
+
         // --- DÉBLOCAGE AUDIO & VERROUILLAGE ÉCRAN ---
         // Cette fonction n'est plus nécessaire avec le nouveau bouton d'activation
-        // function unlockAudio() { } 
+        // function unlockAudio() { }
+
 
         async function requestWakeLock() {
             if ('wakeLock' in navigator) {
@@ -525,6 +689,7 @@
             }
         }
 
+
         function releaseWakeLock() {
             if (wakeLock) {
                 wakeLock.release().then(() => {
@@ -535,17 +700,21 @@
             }
         }
 
+
         // --- LOGIQUE GÉNÉRALE ---
         function startCircuit(mode) {
+            cleanupResources();
             requestWakeLock();
             isSimulationMode = false;
             initCircuit(mode);
             // Assurez-vous que l'écran de suivi est visible avant de démarrer le tracking
-            trackingScreen.style.display = 'flex'; 
+            trackingScreen.style.display = 'flex';
             setTimeout(() => { startTracking(); }, 100);
         }
 
+
         function startSimulation() {
+            cleanupResources();
             requestWakeLock();
             isSimulationMode = true;
             initCircuit('jour'); // On commence toujours la simulation avec le circuit jour par défaut
@@ -555,12 +724,15 @@
             gpsStatus.classList.add('simu');
             gpsStatus.classList.remove('offline');
 
+
             // Assurez-vous que l'écran de suivi est visible avant de démarrer la simulation
             trackingScreen.style.display = 'flex';
             setTimeout(() => { runSimulationLoop(); }, 1000);
         }
 
+
         function initCircuit(mode) {
+            currentMode = mode;
             currentCircuitData = (mode === 'jour') ? CIRCUIT_JOUR_STOPS : CIRCUIT_NUIT_STOPS;
             if (currentCircuitData.length === 0) {
                  alert("Erreur: Circuit vide. Veuillez configurer le circuit " + mode.toUpperCase() + ".");
@@ -569,6 +741,9 @@
                  trackingScreen.style.display = 'none';
                  return;
             }
+
+            history.pushState({screen: 'tracking'}, 'Suivi', '#tracking');
+    // ----------------------------------
             currentStopIndex = 0;
             homeScreen.style.display = 'none';
             trackingScreen.style.display = 'flex'; // Rendre l'écran de suivi visible
@@ -579,7 +754,8 @@
             btnActivateAudio.style.display = 'none'; // Cacher le bouton d'activation par défaut
         }
 
-        function initMap(lat, lon) {
+
+      function initMap(lat, lon) {
             if (map !== null) map.remove(); // Supprimer la carte existante si elle y est
             map = L.map('map').setView([lat, lon], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -589,29 +765,53 @@
             updateNextStopMarker();
         }
 
-        function updateNextStopMarker() {
-            if (stopMarker) {
-                map.removeLayer(stopMarker);
-                stopMarker = null; // Réinitialiser le marqueur après suppression
-            }
-            const nextStop = currentCircuitData[currentStopIndex];
-            if (nextStop) {
-                 stopMarker = L.circleMarker([nextStop.latitude, nextStop.longitude], { // Utilisation de circleMarker pour plus de contrôle
-                    radius: 8,
-                    fillColor: "#CC0000",
-                    color: "white",
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                 }).addTo(map);
-            }
-        }
+
+        let triggerCircle = null; // Variable pour stocker la zone de déclenchement
+
+function updateNextStopMarker() {
+    // 1. Suppression des anciens éléments (Marqueur + Cercle de zone)
+    if (stopMarker) {
+        map.removeLayer(stopMarker);
+        stopMarker = null;
+    }
+    if (triggerCircle) {
+        map.removeLayer(triggerCircle);
+        triggerCircle = null;
+    }
+
+    const nextStop = currentCircuitData[currentStopIndex];
+    
+    if (nextStop) {
+        // 2. Ajout de la zone de déclenchement (Le grand cercle bleu transparent)
+        // On utilise L.circle car son 'radius' est en mètres réels sur la carte
+        triggerCircle = L.circle([nextStop.latitude, nextStop.longitude], {
+            radius: nextStop.triggerRadius, // Utilise le rayon de votre circuit (ex: 50m, 100m)
+            color: '#E67E22',      // Couleur du contour
+            fillColor: '#E67E22',  // Couleur de remplissage
+            fillOpacity: 0.2,     // Très transparent pour ne pas masquer la carte
+            weight: 1.5,             // Épaisseur du trait de bordure
+            dashArray: '5, 10'      // Optionnel : rend le bord en pointillés
+        }).addTo(map);
+
+        // 3. Votre point rouge actuel (Le repère visuel au centre)
+        stopMarker = L.circleMarker([nextStop.latitude, nextStop.longitude], {
+            radius: 8,
+            fillColor: "#CC0000",
+            color: "white",
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(map);
+    }
+}
+
 
         function updateMap(lat, lon) {
             const newLatLng = new L.LatLng(lat, lon);
             if (trainMarker) trainMarker.setLatLng(newLatLng);
             if (map) map.setView(newLatLng, map.getZoom());
         }
+
 
         // --- BARRE DE PROGRESSION ---
         function startProgressTracking() {
@@ -626,11 +826,13 @@
             }, 100);
         }
 
+
         function stopProgressTracking() {
             clearInterval(progressInterval);
             progressInterval = null; // Vider l'identifiant de l'intervalle
             progressBar.style.width = '0%';
         }
+
 
         // --- SUIVI GPS ---
         function startTracking() {
@@ -661,13 +863,15 @@
             }
         }
 
+
         function runSimulationLoop() {
             // Initialisation de la simulation plus proche du premier arrêt du CIRCUIT_JOUR_STOPS
             let simLat = CIRCUIT_JOUR_STOPS[0].latitude + 0.001;
             let simLon = CIRCUIT_JOUR_STOPS[0].longitude + 0.001;
-            
+           
             if (map === null) initMap(simLat, simLon); // Initialiser la carte si elle ne l'est pas
             const stepSize = 0.00005; // Ajuste cette valeur pour changer la vitesse de la simulation
+
 
             simulationInterval = setInterval(() => {
                 if (!currentCircuitData || !currentCircuitData[currentStopIndex]) {
@@ -678,10 +882,12 @@
                     return;
                 }
 
+
                 const target = currentCircuitData[currentStopIndex];
                 const dLat = target.latitude - simLat;
                 const dLon = target.longitude - simLon;
                 const dist = Math.sqrt(dLat*dLat + dLon*dLon);
+
 
                 if (dist > 0.0001) { // Si la distance est encore significative
                     simLat += (dLat / dist) * stepSize;
@@ -696,6 +902,7 @@
             }, 100);
         }
 
+
         // --- COEUR DU SYSTÈME ---
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371e3;
@@ -706,6 +913,7 @@
             const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         }
+
 
         function checkStopTrigger(lat, lon) {
             const nextStop = currentCircuitData[currentStopIndex];
@@ -723,6 +931,7 @@
             }
             const dist = calculateDistance(lat, lon, nextStop.latitude, nextStop.longitude);
             distanceDisplay.textContent = Math.round(dist) + " m";
+
 
             // Mettre à jour l'état des boutons manuels en fonction de l'état actuel de l'audio
             if (isAudioPlaying || isAudioPaused) {
@@ -742,16 +951,18 @@
                 btnPlayPause.classList.remove('paused');
             }
 
+
             // Déclenchement de l'audio si proche de l'arrêt ET qu'aucun audio n'est déjà en cours ou en pause
             if (dist <= nextStop.triggerRadius && !isAudioPlaying && !isAudioPaused) {
                 playAudio(nextStop);
             }
         }
 
+
         function playAudio(stop) {
             audioPlayer.src = stop.file ? ('assets/audio/' + stop.file) : '';
             currentStopName.textContent = stop.name;
-            
+           
             isAudioPlaying = true;
             isAudioPaused = false;
             btnPlayPause.textContent = "⏸️ Pause";
@@ -759,11 +970,14 @@
             btnReplay.disabled = false;
             btnPlayPause.disabled = false;
 
+
             // Reset progress bar on new audio play
             progressBar.style.width = '0%';
             startProgressTracking();
 
+
             var playPromise = audioPlayer.play();
+
 
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
@@ -775,7 +989,7 @@
                     isAudioPlaying = false; // Ne pas considérer comme jouant si bloqué
                     isAudioPaused = false; // Ni en pause
                     audioFeedback.textContent = "⚠️ Le son est bloqué. Cliquez sur le bouton ci-dessous pour activer.";
-                    
+                   
                     // Afficher un bouton spécifique pour activer l'audio
                     btnActivateAudio.style.display = 'block';
                     btnActivateAudio.onclick = function() {
@@ -795,6 +1009,7 @@
                         });
                     };
 
+
                     // Désactiver les contrôles de base tant que l'audio n'est pas activé
                     btnReplay.disabled = true;
                     btnPlayPause.disabled = true;
@@ -804,13 +1019,14 @@
                 });
             }
 
+
             audioPlayer.onended = () => {
                 isAudioPlaying = false;
                 isAudioPaused = false;
                 currentStopIndex++;
                 updateNextStopMarker();
                 stopProgressTracking();
-                
+               
                 if (currentCircuitData && currentCircuitData[currentStopIndex]) {
                     nextStopName.textContent = currentCircuitData[currentStopIndex].name;
                     audioFeedback.textContent = "En route vers le prochain arrêt...";
@@ -826,8 +1042,10 @@
             };
         }
 
+
         function replayAudio() {
             const stopToReplay = currentCircuitData[currentStopIndex];
+
 
             if (stopToReplay) {
                 audioPlayer.pause();
@@ -841,96 +1059,57 @@
             }
         }
 
+
         function togglePlayPause() {
-            if (isAudioPlaying) {
-                audioPlayer.pause();
-                isAudioPlaying = false;
-                isAudioPaused = true;
-                audioFeedback.textContent = `⏸️ PAUSE : ${currentCircuitData[currentStopIndex].name}`;
-                btnPlayPause.textContent = "▶️ Play";
-                btnPlayPause.classList.add('paused');
-                stopProgressTracking();
-            } else if (isAudioPaused) {
-                audioPlayer.play();
-                isAudioPlaying = true;
-                isAudioPaused = false;
-                audioFeedback.textContent = `▶️ LECTURE : ${currentCircuitData[currentStopIndex].name}`;
-                btnPlayPause.textContent = "⏸️ Pause";
-                btnPlayPause.classList.remove('paused');
-                startProgressTracking();
-            }
-            btnReplay.disabled = false;
-            btnPlayPause.disabled = false;
-        }
-   
-       // --- GESTION DU PANNEAU GLISSANT (Info Panel) ---
-const infoPanel = document.getElementById('info-panel');
-
-// 1. DÉTECTION MOBILE : On vérifie si l'écran est petit (< 900px)
-const isMobile = window.matchMedia('(max-width: 900px)');
-
-if (isMobile.matches) {
-    // Tout ce code ne s'exécutera QUE sur un téléphone mobile
-    let startY;
-    let startHeight;
-    let isDragging = false;
-    let isSwiping = false; // Variable pour savoir si on a vraiment bougé le doigt
-
-    infoPanel.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        isSwiping = false; // On remet à zéro au début du toucher
-        startY = e.touches[0].clientY;
-        startHeight = infoPanel.offsetHeight;
-        infoPanel.style.transition = 'none';
-        infoPanel.classList.remove('collapsed', 'expanded');
-        infoPanel.style.cursor = 'grabbing';
-    });
-
-    infoPanel.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        
-        const currentY = e.touches[0].clientY;
-        const deltaY = currentY - startY;
-
-        // Si on a bougé de plus de 5 pixels, c'est un vrai glissement (swipe)
-        if (Math.abs(deltaY) > 5) {
-            isSwiping = true;
-        }
-
-        let newHeight = startHeight - deltaY;
-        newHeight = Math.max(150, Math.min(window.innerHeight * 0.8, newHeight));
-        infoPanel.style.height = `${newHeight}px`;
-    });
-
-    infoPanel.addEventListener('touchend', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        infoPanel.style.transition = 'height 0.3s ease-out';
-        infoPanel.style.cursor = 'grab';
-
-        // SÉCURITÉ IMPORTANTE :
-        // Si l'utilisateur n'a pas vraiment glissé (juste cliqué ou touché à peine),
-        // on ne change rien et on sort de la fonction !
-        if (!isSwiping) {
-            infoPanel.style.height = ''; // On laisse le CSS gérer
-            return; 
-        }
-
-        // Sinon, on gère l'ouverture/fermeture
-        const currentHeight = infoPanel.offsetHeight;
-        if (currentHeight < window.innerHeight * 0.5) {
-            infoPanel.classList.add('collapsed');
-        } else {
-            infoPanel.classList.add('expanded');
-        }
-        infoPanel.style.height = ''; // Nettoyage final
-    });
+    if (isAudioPlaying) {
+        audioPlayer.pause();
+        isAudioPlaying = false;
+        isAudioPaused = true;
+        audioFeedback.textContent = `⏸️ PAUSE : ${currentCircuitData[currentStopIndex].name}`;
+        btnPlayPause.textContent = "▶️ Play";
+        btnPlayPause.classList.add('paused');
+        stopProgressTracking();
+    } else if (isAudioPaused) {
+        audioPlayer.play();
+        isAudioPlaying = true;
+        isAudioPaused = false;
+        audioFeedback.textContent = `▶️ LECTURE : ${currentCircuitData[currentStopIndex].name}`;
+        btnPlayPause.textContent = "⏸️ Pause";
+        btnPlayPause.classList.remove('paused');
+        startProgressTracking();
+    }
+    btnReplay.disabled = false;
+    btnPlayPause.disabled = false;
 }
+
+
+// --- GESTION DU PANNEAU TOGGLE ---
+function togglePanel() {
+    const panel = document.getElementById('info-panel');
+    const icon = document.getElementById('toggle-icon');
+   
+    // On vérifie la position actuelle du panneau
+    // Note : on compare avec la valeur exacte du CSS
+    if (panel.style.transform === 'translateY(0%)') {
+        // FERMER : on le renvoie vers le bas (70% de sa hauteur)
+        panel.style.transform = 'translateY(70%)';
+        icon.textContent = "⬆️";
+    } else {
+        // OUVRIR : on le remonte à sa position initiale
+        panel.style.transform = 'translateY(0%)';
+        icon.textContent = "⬇️";
+    }
+}
+
+
 
 
    // --- NOUVELLES FONCTIONS POUR LA NAVIGATION ---
 
+
 function showHomeScreen() {
+    cleanupResources();
+    if (triggerCircle) { map.removeLayer(triggerCircle); triggerCircle = null; }
     trackingScreen.style.display = 'none';
     homeScreen.style.display = 'flex';
     // Assurez-vous d'arrêter tout suivi/simulation si on revient à l'accueil
@@ -944,10 +1123,12 @@ function showHomeScreen() {
     btnActivateAudio.style.display = 'none'; // Cacher le bouton d'activation
 }
 
+
 function showTrackingScreen() {
     homeScreen.style.display = 'none';
     trackingScreen.style.display = 'flex';
 }
+
 
 // Gérer le clic sur le nouveau bouton Retour
 document.getElementById('btn-back-home').addEventListener('click', () => {
@@ -956,33 +1137,10 @@ document.getElementById('btn-back-home').addEventListener('click', () => {
 });
 
 
-// --- MODIFICATION DES FONCTIONS EXISTANTES ---
 
-// Modifie startCircuit
-function startCircuit(mode) {
-    requestWakeLock();
-    isSimulationMode = false;
-    initCircuit(mode);
-    showTrackingScreen(); // Affiche l'écran de suivi
-    // Pousser un état dans l'historique quand on va à l'écran de suivi
-    history.pushState({ screen: 'tracking' }, '', '#tracking');
-    setTimeout(() => { startTracking(); }, 100);
-}
 
-// Modifie startSimulation
-function startSimulation() {
-    requestWakeLock();
-    isSimulationMode = true;
-    initCircuit('jour');
-    showTrackingScreen(); // Affiche l'écran de suivi
-    // Pousser un état dans l'historique quand on va à l'écran de suivi
-    history.pushState({ screen: 'tracking' }, '', '#tracking');
-    document.getElementById('circuit-mode').textContent = "SIMULATION";
-    gpsStatus.textContent = "🎮 SIMULATION";
-    gpsStatus.classList.add('simu');
-    gpsStatus.classList.remove('offline');
-    setTimeout(() => { runSimulationLoop(); }, 1000);
-}
+
+
 
 
 // --- GESTION DE L'ÉVÉNEMENT POPSTATE (bouton retour du navigateur) ---
@@ -998,6 +1156,7 @@ window.addEventListener('popstate', (event) => {
     }
 });
 
+
 // Gérer le cas où l'utilisateur arrive directement sur l'URL #tracking (pourrait être utile)
 // if (window.location.hash === '#tracking') {
 //     showTrackingScreen();
@@ -1006,7 +1165,11 @@ window.addEventListener('popstate', (event) => {
 //     showHomeScreen(); // Assure que l'accueil est affiché par défaut
 // }
 
+
    </script>
+
+
+
 
 
 
@@ -1019,6 +1182,7 @@ window.addEventListener('popstate', (event) => {
         });
       }
     </script>
+
 
 </body>
 </html>
