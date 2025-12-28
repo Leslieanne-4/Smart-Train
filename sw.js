@@ -19,7 +19,7 @@ const ASSETS_TO_CACHE = [
   // Vos fichiers audio
   'assets/audio/depart_2.mp3',
   'assets/audio/mur_patrimoine_2.mp3',
-  'assets/audio/avenue_jean_paul_2.mp3',
+  'assets/audio/Monuments_aux_devoues.mp3',
   'assets/audio/place_souvenir_2.mp3',
   'assets/audio/bio_guerra_2.mp3',
   'assets/audio/sofitel_2.mp3',
